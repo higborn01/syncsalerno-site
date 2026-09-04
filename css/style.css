@@ -1,0 +1,548 @@
+/* ============================================================
+   Sync Salerno — shared styles
+   ============================================================ */
+
+:root {
+  --bg: #faf6ee;
+  --bg-alt: #f1e9d8;
+  --paper: #fffdf8;
+  --ink: #2b2620;
+  --ink-soft: #6b6255;
+  --ink-faint: #9a9080;
+  --rule: #e2d8c3;
+  --accent: #b5502e;
+  --accent-soft: #d98a63;
+  --writing-accent: #4a463f;
+  --programs-accent: #35564f;
+  --serif: "Source Serif 4", Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --max: 780px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; }
+
+a.underline-link {
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 3px;
+  transition: text-decoration-color .15s ease;
+}
+a.underline-link:hover { text-decoration-color: currentColor; }
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.wrap-wide {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- header / nav ---------- */
+
+header.site-header {
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+.site-header .wrap-wide {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 28px;
+  padding-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+}
+
+.site-brand {
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.site-brand span {
+  color: var(--ink-soft);
+  font-weight: 400;
+  font-style: italic;
+}
+
+nav.site-nav {
+  display: flex;
+  gap: 28px;
+  font-family: var(--sans);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+nav.site-nav a {
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+}
+
+nav.site-nav a:hover,
+nav.site-nav a.active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+/* ---------- footer ---------- */
+
+footer.site-footer {
+  border-top: 1px solid var(--rule);
+  margin-top: 100px;
+  padding: 36px 0 60px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+footer.site-footer .wrap-wide {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+footer.site-footer a { color: var(--ink-soft); text-decoration: none; }
+footer.site-footer a:hover { color: var(--ink); }
+
+/* ---------- hero ---------- */
+
+.hero {
+  padding: 70px 0 60px;
+}
+
+.hero h1 {
+  font-size: 46px;
+  line-height: 1.15;
+  margin: 0 0 18px;
+  font-weight: 600;
+}
+
+.hero p.lede {
+  font-size: 20px;
+  color: var(--ink-soft);
+  max-width: 60ch;
+  margin: 0;
+}
+
+.section-label {
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 10px;
+}
+
+/* ---------- home page cards ---------- */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  padding: 10px 0 90px;
+}
+
+@media (max-width: 760px) {
+  .card-grid { grid-template-columns: 1fr; }
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 30px 26px;
+  transition: border-color .15s ease, transform .15s ease;
+}
+
+.card:hover { border-color: var(--ink-faint); transform: translateY(-2px); }
+
+.card .kicker {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.card h2 {
+  font-size: 24px;
+  margin: 0 0 10px;
+}
+
+.card p {
+  color: var(--ink-soft);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* ---------- recipes ---------- */
+
+.recipe-filter {
+  font-family: var(--sans);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  margin: 6px 0 30px;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding-bottom: 40px;
+}
+
+@media (max-width: 640px) {
+  .recipe-grid { grid-template-columns: 1fr; }
+}
+
+.recipe-card {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  padding: 20px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.recipe-card .cat {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.recipe-card h3 {
+  font-size: 21px;
+  margin: 6px 0 4px;
+}
+
+.recipe-card .blurb {
+  color: var(--ink-soft);
+  font-size: 15px;
+  margin: 0;
+}
+
+.recipe-header {
+  padding: 60px 0 10px;
+}
+
+.recipe-header .cat {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.recipe-header h1 {
+  font-size: 40px;
+  margin: 12px 0 14px;
+  line-height: 1.15;
+}
+
+.recipe-header .source-note {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.recipe-story {
+  background: var(--bg-alt);
+  border-radius: 4px;
+  padding: 24px 26px;
+  margin: 28px 0 10px;
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+
+.recipe-story p { margin: 0 0 10px; }
+.recipe-story p:last-child { margin-bottom: 0; }
+
+.recipe-body {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 50px;
+  padding: 40px 0 60px;
+}
+
+@media (max-width: 700px) {
+  .recipe-body { grid-template-columns: 1fr; gap: 20px; }
+}
+
+.recipe-body h2 {
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 16px;
+}
+
+.ingredient-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+
+.ingredient-list li {
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.ingredient-list li:last-child { border-bottom: 1px solid var(--rule); }
+
+.step-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.step-list li {
+  counter-increment: step;
+  padding: 0 0 22px 44px;
+  position: relative;
+  font-size: 17px;
+}
+
+.step-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heirloom-figure {
+  margin: 30px 0;
+  padding: 0;
+}
+
+.heirloom-figure img {
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+
+.heirloom-figure figcaption {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.back-link {
+  display: inline-block;
+  margin: 40px 0 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.back-link:hover { color: var(--ink); }
+
+/* ---------- writing page (Ocean Vuong–inspired) ---------- */
+
+body.writing-page {
+  background: #fbfaf7;
+}
+
+.writing-hero {
+  padding: 90px 0 70px;
+  text-align: center;
+}
+
+.writing-hero h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 34px;
+  color: var(--writing-accent);
+  margin: 0 0 20px;
+}
+
+.writing-hero p {
+  max-width: 46ch;
+  margin: 0 auto;
+  color: var(--ink-soft);
+  font-size: 18px;
+}
+
+.writing-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--ink-faint);
+  margin: 60px auto;
+}
+
+.piece {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 0 24px 90px;
+  text-align: center;
+}
+
+.piece .piece-kind {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 18px;
+}
+
+.piece h2 {
+  font-size: 26px;
+  font-weight: 400;
+  margin: 0 0 30px;
+}
+
+.piece .excerpt {
+  font-size: 19px;
+  line-height: 2;
+  color: var(--ink);
+  white-space: pre-line;
+  font-style: italic;
+}
+
+.piece .placeholder-note {
+  margin-top: 26px;
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 13px;
+  color: var(--ink-faint);
+  letter-spacing: 0.02em;
+}
+
+.writing-page footer.site-footer,
+.writing-page header.site-header { background: transparent; }
+
+/* ---------- programs page ---------- */
+
+.programs-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-bottom: 60px;
+}
+
+.program {
+  padding: 40px 0;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 36px;
+}
+
+@media (max-width: 700px) {
+  .program { grid-template-columns: 1fr; gap: 14px; }
+}
+
+.program .status {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--programs-accent);
+  border: 1px solid var(--programs-accent);
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 3px;
+  margin-bottom: 14px;
+}
+
+.program h2 {
+  font-size: 26px;
+  margin: 0 0 6px;
+}
+
+.program .tagline {
+  color: var(--ink-soft);
+  font-size: 16px;
+  margin: 0 0 18px;
+}
+
+.program .stack {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--programs-accent);
+  margin: 0 0 16px;
+}
+
+.program ul.details {
+  margin: 0 0 18px;
+  padding-left: 20px;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.program ul.details li { margin-bottom: 8px; }
+
+.program a.repo-link {
+  font-family: var(--sans);
+  font-size: 14px;
+  text-decoration: none;
+  border-bottom: 1px solid var(--programs-accent);
+  color: var(--programs-accent);
+  padding-bottom: 1px;
+}
+.program a.repo-link:hover { color: var(--ink); border-color: var(--ink); }
+
+.placeholder-card {
+  border: 1px dashed var(--rule);
+  border-radius: 4px;
+  padding: 26px;
+  margin-top: 20px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink-faint);
+}

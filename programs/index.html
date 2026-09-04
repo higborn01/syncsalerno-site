@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programs — Sync Salerno</title>
+<meta name="description" content="Software projects by John Salerno.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+<header class="site-header">
+  <div class="wrap-wide">
+    <a class="site-brand" href="../index.html">Sync Salerno <span>&mdash; John Salerno</span></a>
+    <nav class="site-nav">
+      <a href="../recipes/index.html">Recipes</a>
+      <a href="../writing/index.html">Writing</a>
+      <a href="../programs/index.html" class="active">Programs</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <p class="section-label">Programs</p>
+      <h1>Things I've built</h1>
+      <p class="lede">Open-source and in-progress projects.</p>
+    </div>
+
+    <div class="programs-grid">
+
+      <div class="program">
+        <div>
+          <span class="status">Active</span>
+          <div class="stack">GitHub Actions &middot; iOS Shortcuts</div>
+        </div>
+        <div>
+          <h2>hazard-alerter</h2>
+          <p class="tagline">A daily weather-hazard forecast, triggered from your phone.</p>
+          <ul class="details">
+            <li>A GitHub Actions workflow (<code>daily_forecast.yml</code>) that runs on demand via <code>workflow_dispatch</code>.</li>
+            <li>Triggered by an Apple Shortcut that grabs the phone's current location, extracts the ZIP code, and posts the dispatch with that ZIP as an input.</li>
+          </ul>
+          <a class="repo-link" href="https://github.com/higborn01/hazard-alerter" target="_blank" rel="noopener">github.com/higborn01/hazard-alerter</a>
+        </div>
+      </div>
+
+      <div class="program">
+        <div>
+          <span class="status">In progress</span>
+          <div class="stack">Flutter / Dart &middot; Rust/C (FFI) &middot; Postgres &middot; Python</div>
+        </div>
+        <div>
+          <h2>boring-log-app</h2>
+          <p class="tagline">An open-source field app for geotechnical boring logs.</p>
+          <ul class="details">
+            <li>Handles soil boring logs, bedrock/rock core logs, and well logs, with built-in soil classification aligned to EPA / state DEP / USGS standards.</li>
+            <li>Ships the full symbology library rather than a curated subset, reusing existing agency symbol assets as-is.</li>
+            <li>Starting with NJDEP's jurisdiction-specific symbols (well-construction, environmental), with other states to follow.</li>
+            <li>Offline-first for field data collection, with an office mode; a Rust/C core via FFI handles performance-critical pieces like USCS classification and DIGGS/AGS parsing, with Python on the server side for heavy validation and reporting.</li>
+            <li>Data model built first: a Postgres schema shaped to map onto the DIGGS standard.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="placeholder-card">
+      More projects to come &mdash; tell me what else to add here and I'll build out its card.
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide">
+    <span>&copy; John Salerno</span>
+    <span><a href="../index.html">syncsalerno.com</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
