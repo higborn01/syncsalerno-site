@@ -43,6 +43,12 @@
             <li>A GitHub Actions workflow (<code>daily_forecast.yml</code>) that runs on demand via <code>workflow_dispatch</code>.</li>
             <li>Triggered by an Apple Shortcut that grabs the phone's current location, extracts the ZIP code, and posts the dispatch with that ZIP as an input.</li>
           </ul>
+          <div class="gh-stats" data-repo="higborn01/hazard-alerter">
+            <span class="gh-stat gh-stars">Stars <b>&ndash;</b></span>
+            <span class="gh-stat gh-forks">Forks <b>&ndash;</b></span>
+            <span class="gh-stat gh-issues">Open issues <b>&ndash;</b></span>
+            <span class="gh-stat gh-updated">Updated <b>&ndash;</b></span>
+          </div>
           <a class="repo-link" href="https://github.com/higborn01/hazard-alerter" target="_blank" rel="noopener">github.com/higborn01/hazard-alerter</a>
         </div>
       </div>
@@ -79,6 +85,12 @@
             <li>Cross-validated across all three languages to 4 decimal places, byte-verified against the paper's official supplementary materials.</li>
             <li>Finding: the composite stays inside the 95% confidence band at every post-eruption lag &mdash; no statistically significant response detected.</li>
           </ul>
+          <div class="gh-stats" data-repo="higborn01/coral-sea-dee2020">
+            <span class="gh-stat gh-stars">Stars <b>&ndash;</b></span>
+            <span class="gh-stat gh-forks">Forks <b>&ndash;</b></span>
+            <span class="gh-stat gh-issues">Open issues <b>&ndash;</b></span>
+            <span class="gh-stat gh-updated">Updated <b>&ndash;</b></span>
+          </div>
           <a class="repo-link" href="https://github.com/higborn01/coral-sea-dee2020" target="_blank" rel="noopener">github.com/higborn01/coral-sea-dee2020</a>
         </div>
       </div>
@@ -94,5 +106,33 @@
   </div>
 </footer>
 
+<script>
+(function () {
+  var cards = document.querySelectorAll('.gh-stats[data-repo]');
+  cards.forEach(function (el) {
+    var repo = el.getAttribute('data-repo');
+    fetch('https://api.github.com/repos/' + repo)
+      .then(function (r) { if (!r.ok) throw new Error('gh api error'); return r.json(); })
+      .then(function (data) {
+        var stars = el.querySelector('.gh-stars b');
+        var forks = el.querySelector('.gh-forks b');
+        var issues = el.querySelector('.gh-issues b');
+        var updated = el.querySelector('.gh-updated b');
+        if (stars) stars.textContent = data.stargazers_count;
+        if (forks) forks.textContent = data.forks_count;
+        if (issues) issues.textContent = data.open_issues_count;
+        if (updated) {
+          var d = new Date(data.pushed_at);
+          var days = Math.round((Date.now() - d.getTime()) / 86400000);
+          updated.textContent = days <= 0 ? 'today' : days === 1 ? '1 day ago' : days < 30 ? days + ' days ago' : d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        }
+        el.classList.add('gh-stats-loaded');
+      })
+      .catch(function () {
+        el.classList.add('gh-stats-error');
+      });
+  });
+})();
+</script>
 </body>
 </html>
