@@ -639,6 +639,40 @@ body.writing-page::before { display: none; }
 }
 .program a.repo-link:hover { color: var(--brass-soft); border-color: var(--brass-soft); }
 
+.gh-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin: 4px 0 18px;
+}
+
+.gh-stats .gh-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--rule);
+  background: var(--bg-alt);
+  padding: 4px 9px;
+  font-family: var(--label);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--cream-soft);
+  transition: opacity .2s ease;
+}
+
+.gh-stats .gh-stat b {
+  font-weight: 700;
+  color: var(--tesla-soft);
+  text-shadow: 0 0 6px rgba(95, 212, 255, 0.4);
+}
+
+.gh-stats.gh-stats-loaded .gh-stat {
+  border-color: var(--tesla);
+}
+
+.gh-stats.gh-stats-error { display: none; }
+
 .placeholder-card {
   border: 1px dashed var(--rule);
   padding: 26px;
