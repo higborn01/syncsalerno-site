@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dinner Wheel — Sync Salerno</title>
+<meta name="description" content="Spin the wheel for tonight's dinner — 110 vegetarian dinners, ingredients and recipe included.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dinner-wheel-page">
+<header class="site-header">
+  <div class="wrap-wide">
+    <a class="site-brand" href="index.html">Sync Salerno <span>&mdash; John Salerno</span></a>
+    <nav class="site-nav">
+      <a href="recipes/index.html">Recipes</a>
+      <a href="writing/index.html">Writing</a>
+      <a href="programs/index.html">Programs</a>
+      <a href="dinner-wheel.html" class="active">Dinner Wheel</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap-wide wheel-page">
+
+  <header class="wheel-hero">
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">110 Dinners · Vegetarian</div>
+        <h1>What's for Dinner?</h1>
+        <p>Spin the wheel for tonight's dinner — ingredients and a recipe show up the moment it lands. Taco Tuesday's a standing order and never in the wheel.</p>
+      </div>
+      <div class="taco-badge">
+        <strong>Taco Tuesday</strong>
+        Soft + hard shell, cheese sauce, pico, Mexican rice. Every week — never in the wheel.
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <div class="wheel-panel">
+      <div class="wheel-wrap">
+        <div class="pointer" aria-hidden="true"></div>
+        <canvas id="wheel-canvas-el" width="480" height="480"></canvas>
+        <button class="hub" id="spin-btn" type="button">SPIN</button>
+      </div>
+
+      <div class="ticket" id="ticket">
+        <div class="eyebrow">Tonight's Dinner</div>
+        <div class="ticket-name placeholder" id="ticket-name">Give the wheel a spin →</div>
+        <div class="ticket-desc" id="ticket-desc"></div>
+        <div id="ticket-tag"></div>
+        <div id="ticket-recipe"></div>
+      </div>
+      <div class="sr-only" role="status" aria-live="polite" id="live-region"></div>
+    </div>
+
+    <div class="menu-panel">
+      <div class="menu-head">
+        <h2><span id="active-count">110</span> Dishes in the Mix</h2>
+        <button class="reset-link" id="reset-btn" type="button">Reset menu</button>
+      </div>
+
+      <div id="menu-board"></div>
+    </div>
+
+  </div>
+
+  <p class="wheel-footnote">Uncheck a dish and it stays off the wheel next time, too.</p>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var MEALS = [
+    // ---- Weeknight ----
+    { id: "tomato-soup", name: "Tomato Soup & Grilled Cheese", category: "weeknight", weight: 1, desc: "Creamy tomato soup, sharp cheddar melt, toasted sourdough.", ingredients: "canned crushed tomatoes, vegetable broth, butter, onion, garlic, heavy cream, sourdough, sharp cheddar", steps: ["Sauté onion and garlic in butter, add tomatoes and broth, simmer 15 min.", "Blend until smooth, stir in a splash of cream, season.", "Butter bread, layer cheddar, grill both sides until golden and melted.", "Serve soup with the sandwich for dipping."] },
+    { id: "fried-rice", name: "Instant Pot Veggie Fried Rice", category: "weeknight", weight: 1, desc: "Brown rice, egg, peas and carrot, soy-ginger glaze.", ingredients: "day-old rice, egg, frozen peas and carrots, scallion, soy sauce, sesame oil, garlic, ginger", steps: ["Sauté garlic, ginger, and peas and carrots on high.", "Push veggies aside, scramble the egg in the empty space.", "Add rice, soy sauce, sesame oil; stir-fry 3-4 min until hot through.", "Top with scallion."] },
+    { id: "bb-quesadillas", name: "Black Bean Quesadillas", category: "weeknight", weight: 1, desc: "Black beans, cheddar, cumin, pico and lime crema.", ingredients: "flour tortillas, black beans, shredded cheddar or Mexican blend, cumin, pico de gallo, lime crema", steps: ["Mash beans lightly with cumin.", "Layer beans and cheese between tortillas.", "Griddle both sides until crisp and the cheese melts.", "Cut into wedges, serve with pico and crema."] },
+    { id: "lentil-chili", name: "Instant Pot Lentil Chili", category: "weeknight", weight: 1, desc: "Red lentils, tomato, smoked paprika, avocado on top.", ingredients: "red lentils, canned diced tomatoes, onion, garlic, smoked paprika, chili powder, cumin, vegetable broth, avocado", steps: ["Sauté onion and garlic, add the spices to bloom.", "Add lentils, tomatoes, broth; pressure cook 10 min, natural release.", "Stir and adjust seasoning.", "Top with avocado."] },
+    { id: "stir-fry", name: "Veggie Stir-Fry over Rice", category: "weeknight", weight: 1, desc: "Broccoli, bell pepper, snap peas, garlic-ginger sauce.", ingredients: "broccoli, bell pepper, snap peas, garlic, ginger, soy sauce, cornstarch, rice", steps: ["Steam or par-cook rice.", "Stir-fry garlic and ginger in a hot pan, add vegetables in order of density.", "Whisk soy sauce with a little cornstarch and water, toss in to glaze.", "Serve over rice."] },
+    { id: "potato-bar", name: "Loaded Baked Potato Bar", category: "weeknight", weight: 1, desc: "Baked potatoes, black beans, cheddar, sour cream, chives.", ingredients: "russet potatoes, black beans, shredded cheddar, sour cream, chives, butter", steps: ["Bake potatoes at 425°F about 45-50 min until fork-tender.", "Warm the black beans.", "Split potatoes, load with beans, cheese, butter, sour cream, chives."] },
+    { id: "enchiladas", name: "Cheese Enchiladas", category: "weeknight", weight: 1, desc: "Corn tortillas, red sauce, jack cheese, cilantro-onion.", ingredients: "corn tortillas, red enchilada sauce, Monterey Jack cheese, onion, cilantro", steps: ["Warm tortillas so they roll without cracking.", "Fill with cheese and onion, roll, place seam-down in a baking dish.", "Cover with sauce and more cheese, bake at 375°F 20 min.", "Top with cilantro."] },
+    { id: "fajita-bowls", name: "Veggie Fajita Bowls", category: "weeknight", weight: 1, desc: "Peppers, onions, black beans, rice, chipotle crema.", ingredients: "bell peppers, onion, black beans, rice, chili-lime seasoning, chipotle crema", steps: ["Slice peppers and onion, sauté hot with seasoning until charred at the edges.", "Warm the black beans.", "Build bowls over rice with peppers, beans, and crema."] },
+    { id: "chickpea-curry", name: "Chickpea Curry over Rice", category: "weeknight", weight: 1, desc: "Coconut milk, tomato, garam masala, spinach stirred in.", ingredients: "chickpeas, coconut milk, canned tomato, onion, garlic, ginger, garam masala, spinach, rice", steps: ["Sauté onion, garlic, ginger; add garam masala to bloom.", "Add tomato and coconut milk with the chickpeas; simmer 15 min.", "Stir in spinach until wilted.", "Serve over rice."] },
+    { id: "burrito-bowls", name: "Veggie Burrito Bowls", category: "weeknight", weight: 1, desc: "Cilantro-lime rice, pinto beans, corn, salsa, cotija.", ingredients: "cilantro-lime rice, pinto beans, corn, salsa, cotija or feta, romaine", steps: ["Warm the beans and corn.", "Build bowls: rice, beans, corn, lettuce, salsa, cheese."] },
+    { id: "ip-mac-cheese", name: "Instant Pot Mac & Cheese", category: "weeknight", weight: 1, desc: "Sharp cheddar and gruyère, a little squash hidden in.", ingredients: "elbow pasta, sharp cheddar, gruyère, evaporated milk, butter, mustard powder", steps: ["Pressure cook pasta in water or broth 4 min, quick release.", "Drain a little liquid, stir in butter, milk, and cheeses off heat until smooth.", "Season with mustard powder, salt, pepper."] },
+    { id: "greek-falafel", name: "Greek Salad with Falafel", category: "weeknight", weight: 1, desc: "Crispy falafel, cucumber, tomato, olives, tzatziki.", ingredients: "frozen or homemade falafel, cucumber, tomato, red onion, kalamata olives, feta, tzatziki, pita", steps: ["Bake or pan-fry the falafel until crisp.", "Toss the vegetables with olives and feta.", "Serve with pita and tzatziki."] },
+    { id: "bb-burgers", name: "Black Bean Burgers & Sweet Potato Fries", category: "weeknight", weight: 1, desc: "Homemade patties, roasted fries, chipotle mayo.", ingredients: "black beans, breadcrumbs, egg, cumin, sweet potatoes, buns, toppings", steps: ["Cut sweet potatoes into fries, roast at 425°F 25-30 min.", "Mash beans, mix with breadcrumbs, egg, spices; form patties.", "Pan-sear patties 4 min per side.", "Assemble the burgers."] },
+    { id: "squash-soup", name: "Butternut Squash Soup & Crusty Bread", category: "weeknight", weight: 1, desc: "Roasted squash, sage, toasted baguette.", ingredients: "butternut squash, onion, vegetable broth, sage, cream, crusty bread", steps: ["Roast squash until tender, or simmer with onion and broth until soft.", "Blend smooth, stir in cream and sage.", "Serve with warmed bread."] },
+    { id: "coconut-curry", name: "Instant Pot Coconut Veggie Curry", category: "weeknight", weight: 1, desc: "Cauliflower, chickpeas, coconut milk, jasmine rice.", ingredients: "cauliflower, chickpeas, coconut milk, curry paste or powder, onion, jasmine rice", steps: ["Sauté onion and curry paste in the Instant Pot.", "Add cauliflower, chickpeas, coconut milk; pressure cook 5 min.", "Serve over jasmine rice."] },
+    { id: "nachos", name: "Loaded Veggie Nachos", category: "weeknight", weight: 1, desc: "Black beans, cheddar, pickled jalapeño, guac, pico.", ingredients: "tortilla chips, black beans, shredded cheese, pickled jalapeño, guacamole, pico de gallo", steps: ["Layer chips, beans, and cheese on a sheet pan.", "Bake at 400°F until the cheese melts.", "Top with jalapeño, guac, pico."] },
+    { id: "stuffed-peppers", name: "Stuffed Bell Peppers", category: "weeknight", weight: 1, desc: "Rice, black beans, corn, cheese, baked in tomato sauce.", ingredients: "bell peppers, cooked rice, black beans, corn, shredded cheese, tomato sauce", steps: ["Halve and seed peppers.", "Mix rice, beans, corn, half the cheese, and sauce; stuff peppers.", "Top with remaining cheese, bake at 375°F 25-30 min covered."] },
+    { id: "shepherds-pie", name: "Veggie Shepherd's Pie", category: "weeknight", weight: 1, desc: "Lentil-mushroom filling, mashed potato crust.", ingredients: "green lentils, mushrooms, carrots, peas, onion, vegetable broth, mashed potatoes", steps: ["Sauté onion, carrots, mushrooms; add lentils, peas, broth, simmer until thick.", "Spread in a baking dish, top with mashed potatoes.", "Bake at 400°F 20 min until golden."] },
+    { id: "dumplings", name: "Veggie Dumplings & Rice", category: "weeknight", weight: 1, desc: "Pan-fried potstickers, sesame-soy dip, jasmine rice.", ingredients: "frozen veggie dumplings, sesame oil, soy sauce, rice vinegar, jasmine rice, scallion", steps: ["Pan-fry dumplings until the bottoms are golden, steam covered a few minutes.", "Mix soy sauce, vinegar, sesame oil for dipping.", "Serve over rice with scallion."] },
+    { id: "broccoli-cheddar", name: "Broccoli Cheddar Soup & Grilled Cheese", category: "weeknight", weight: 1, desc: "Classic pairing, extra-sharp cheddar melt.", ingredients: "broccoli, onion, carrot, vegetable broth, sharp cheddar, milk, butter, sandwich bread", steps: ["Simmer broccoli, onion, carrot in broth until tender.", "Blend partially, stir in cheese and milk until smooth.", "Make grilled cheese alongside, serve together."] },
+    { id: "portobellos", name: "Caprese Stuffed Portobellos", category: "weeknight", weight: 1, desc: "Mozzarella, tomato, basil, balsamic glaze.", ingredients: "portobello mushrooms, mozzarella, tomato, basil, balsamic glaze", steps: ["Remove mushroom stems, brush with oil, roast gill-side up at 400°F 10 min.", "Top with tomato and mozzarella, bake 8 more min.", "Finish with basil and balsamic glaze."] },
+    { id: "lo-mein", name: "Veggie Lo Mein", category: "weeknight", weight: 1, desc: "Cabbage, carrot, mushroom, garlic-sesame noodles.", ingredients: "lo mein or spaghetti noodles, cabbage, carrot, mushroom, garlic, soy sauce, sesame oil", steps: ["Cook the noodles, set aside.", "Stir-fry garlic, cabbage, carrot, mushroom until crisp-tender.", "Toss in the noodles with soy sauce and sesame oil."] },
+    { id: "sushi-bowls", name: "Veggie Sushi Bowls", category: "weeknight", weight: 1, desc: "Sushi rice, avocado, cucumber, edamame, spicy mayo.", ingredients: "sushi rice, rice vinegar, avocado, cucumber, edamame, nori, spicy mayo", steps: ["Season cooked rice with rice vinegar.", "Top with avocado, cucumber, edamame, torn nori.", "Drizzle with spicy mayo."] },
+    { id: "caprese-grilled-cheese", name: "Caprese Grilled Cheese", category: "weeknight", weight: 1, desc: "Fresh mozzarella, tomato, basil, balsamic glaze.", ingredients: "sourdough, fresh mozzarella, tomato, basil, balsamic glaze, butter", steps: ["Layer mozzarella, tomato, and basil between buttered bread.", "Grill both sides until golden and the cheese melts.", "Drizzle with balsamic glaze before serving."] },
+    { id: "chili-mac", name: "Veggie Chili Mac", category: "weeknight", weight: 1, desc: "Elbow pasta, tomato, black beans, chili powder, cheddar.", ingredients: "elbow pasta, canned tomatoes, black beans, chili powder, cheddar", steps: ["Cook the pasta.", "Simmer tomatoes, beans, and chili powder into a chunky sauce.", "Combine with the pasta, top with cheddar."] },
+    { id: "spinach-feta-quesadillas", name: "Spinach & Feta Quesadillas", category: "weeknight", weight: 1, desc: "Wilted spinach, feta, mozzarella, garlic.", ingredients: "tortillas, spinach, feta, mozzarella, garlic", steps: ["Wilt spinach with garlic.", "Layer with both cheeses in tortillas.", "Griddle until crisp and the cheese melts."] },
+    { id: "curried-chickpea-sandwiches", name: "Curried Chickpea Salad Sandwiches", category: "weeknight", weight: 1, desc: "Curried chickpea mash, celery, raisins, bread or lettuce.", ingredients: "chickpeas, curry powder, mayonnaise or yogurt, celery, raisins, bread or lettuce", steps: ["Mash chickpeas with curry powder and mayo or yogurt.", "Fold in celery and raisins.", "Pile onto bread or into lettuce wraps."] },
+    { id: "spinach-artichoke-mushrooms", name: "Spinach Artichoke Stuffed Mushrooms", category: "weeknight", weight: 1, desc: "Portobellos loaded with a spinach-artichoke filling.", ingredients: "portobello or cremini mushrooms, spinach, artichoke hearts, cream cheese, parmesan", steps: ["Mix wilted spinach, chopped artichoke, cream cheese, and parmesan.", "Stuff the mushroom caps generously.", "Bake at 400°F 15-18 min until bubbly and golden."] },
+    { id: "white-bean-kale", name: "White Bean & Kale Skillet", category: "weeknight", weight: 1, desc: "Cannellini beans, garlic, kale, parmesan, crusty bread.", ingredients: "cannellini beans, kale, garlic, parmesan, crusty bread, lemon", steps: ["Sauté garlic and kale.", "Add beans and a splash of broth, simmer a few minutes.", "Finish with lemon and parmesan, serve with bread."] },
+    { id: "sloppy-joes", name: "Veggie Sloppy Joes", category: "weeknight", weight: 1, desc: "Lentils or plant crumble in a tangy tomato sauce, on a bun.", ingredients: "lentils or plant-based crumble, tomato sauce, onion, brown sugar, burger buns", steps: ["Simmer lentils or crumble with tomato sauce, onion, and seasonings until thick.", "Pile onto toasted buns."] },
+    { id: "caesar-crispy-chickpeas", name: "Caesar Salad with Crispy Chickpeas", category: "weeknight", weight: 1, desc: "Romaine, parmesan, roasted chickpeas, croutons.", ingredients: "romaine, parmesan, chickpeas, croutons, caesar dressing", steps: ["Roast chickpeas until crisp.", "Toss romaine with dressing.", "Top with chickpeas, parmesan, and croutons."] },
+    { id: "roasted-veg-panini", name: "Roasted Vegetable Panini", category: "weeknight", weight: 1, desc: "Zucchini, pepper, onion, provolone, pesto, pressed.", ingredients: "zucchini, bell pepper, red onion, provolone, ciabatta, pesto", steps: ["Roast the vegetables until tender.", "Layer with cheese and pesto on ciabatta.", "Press or grill until crisp and the cheese melts."] },
+
+    // ---- Pasta Night ----
+    { id: "primavera", name: "Pasta Primavera", category: "pasta", weight: 1, desc: "Seasonal vegetables, garlic, parmesan, lemon.", ingredients: "pasta, seasonal vegetables (zucchini, asparagus, cherry tomato), garlic, parmesan, lemon", steps: ["Sauté the vegetables until crisp-tender.", "Toss with cooked pasta, garlic, and a squeeze of lemon.", "Finish with parmesan."] },
+    { id: "margherita-pasta", name: "Margherita Pasta", category: "pasta", weight: 1, desc: "San Marzano tomato, fresh mozzarella, basil.", ingredients: "pasta, San Marzano tomatoes, garlic, fresh mozzarella, basil", steps: ["Simmer a simple tomato sauce with garlic.", "Toss with cooked pasta.", "Top with torn mozzarella and basil."] },
+    { id: "caprese-pasta", name: "Caprese Pasta Salad", category: "pasta", weight: 1, desc: "Cherry tomato, bocconcini, basil, balsamic — good warm-weather night.", ingredients: "pasta, cherry tomato, bocconcini, basil, balsamic, olive oil", steps: ["Cook and cool the pasta.", "Toss with halved tomatoes, bocconcini, and basil.", "Dress with balsamic and olive oil."] },
+    { id: "aglio-olio", name: "Spaghetti Aglio e Olio + Roasted Veg", category: "pasta", weight: 1, desc: "Garlic, chili flake, roasted broccolini.", ingredients: "spaghetti, garlic, olive oil, chili flake, broccolini, parmesan", steps: ["Roast the broccolini.", "Slowly cook sliced garlic in olive oil with chili flake until golden.", "Toss with the pasta and broccolini, finish with parmesan."] },
+    { id: "orzo-feta", name: "Orzo with Roasted Vegetables & Feta", category: "pasta", weight: 1, desc: "Zucchini, red pepper, lemon, dill, feta.", ingredients: "orzo, zucchini, red pepper, lemon, dill, feta", steps: ["Roast the vegetables.", "Cook the orzo.", "Toss everything with lemon, dill, and feta."] },
+    { id: "baked-ziti", name: "Baked Ziti", category: "pasta", weight: 1, desc: "Ricotta, mozzarella, marinara, baked bubbly.", ingredients: "ziti, ricotta, mozzarella, marinara, parmesan, basil", steps: ["Mix cooked ziti with ricotta and marinara.", "Top with mozzarella.", "Bake at 375°F 25 min until bubbly."] },
+    { id: "pesto-green-beans", name: "Pesto Pasta with Green Beans & Potato", category: "pasta", weight: 1, desc: "Classic Genovese combo — potato, green beans, basil pesto.", ingredients: "pasta, basil pesto, green beans, baby potatoes, parmesan", steps: ["Boil the potatoes and pasta together.", "Add green beans for the last few minutes.", "Drain, toss with pesto and parmesan."] },
+    { id: "mushroom-stroganoff", name: "Mushroom Stroganoff", category: "pasta", weight: 1, desc: "Mushrooms, onion, sour cream, egg noodles, dill.", ingredients: "mushrooms, onion, garlic, sour cream, vegetable broth, egg noodles, dill", steps: ["Sauté mushrooms and onion until browned.", "Deglaze with broth, stir in sour cream off heat.", "Toss with the noodles, finish with dill."] },
+    { id: "lemon-ricotta-pasta", name: "Lemon Ricotta Pasta", category: "pasta", weight: 1, desc: "Ricotta, lemon zest, parmesan, spinach folded in.", ingredients: "pasta, ricotta, lemon zest, parmesan, black pepper, spinach", steps: ["Cook the pasta, reserve some pasta water.", "Toss with ricotta, lemon, parmesan, and a splash of pasta water.", "Fold in spinach until wilted."] },
+    { id: "roasted-pepper-penne", name: "Roasted Red Pepper Penne", category: "pasta", weight: 1, desc: "Blended roasted pepper sauce, garlic, cream.", ingredients: "penne, jarred roasted red peppers, garlic, cream, parmesan", steps: ["Blend peppers, garlic, and cream into a sauce.", "Warm the sauce through.", "Toss with the penne."] },
+    { id: "eggplant-rigatoni", name: "Eggplant & Tomato Rigatoni", category: "pasta", weight: 1, desc: "Roasted eggplant, tomato, ricotta salata, basil.", ingredients: "rigatoni, eggplant, canned tomatoes, garlic, ricotta salata or parmesan, basil", steps: ["Roast or pan-fry eggplant cubes.", "Simmer with tomato and garlic.", "Toss with the rigatoni, top with cheese and basil."] },
+    { id: "pumpkin-sage-pasta", name: "Pumpkin Sage Pasta", category: "pasta", weight: 1, desc: "Pumpkin puree, sage, cream, nutmeg.", ingredients: "pasta, canned pumpkin puree, sage, parmesan, cream, nutmeg", steps: ["Warm the pumpkin with cream and sage.", "Season with nutmeg.", "Toss with the pasta and parmesan."] },
+    { id: "broccoli-white-bean-orecchiette", name: "Broccoli & White Bean Orecchiette", category: "pasta", weight: 1, desc: "Cannellini beans, chili flake, parmesan.", ingredients: "orecchiette, broccoli, cannellini beans, garlic, chili flake, parmesan", steps: ["Blanch the broccoli.", "Sauté garlic and chili flake.", "Combine with the beans, broccoli, pasta, and parmesan."] },
+    { id: "spinach-ricotta-ravioli", name: "Spinach & Ricotta Ravioli with Brown Butter", category: "pasta", weight: 1, desc: "Store-bought ravioli, nutty brown butter, sage.", ingredients: "spinach-ricotta ravioli, butter, sage, parmesan, lemon zest", steps: ["Cook the ravioli.", "Melt butter with sage until nutty and browned.", "Toss the ravioli in the brown butter, finish with parmesan and lemon zest."] },
+    { id: "fettuccine-alfredo-peas", name: "Fettuccine Alfredo with Peas", category: "pasta", weight: 1, desc: "Butter, parmesan, cream, peas.", ingredients: "fettuccine, butter, parmesan, cream, peas, black pepper", steps: ["Melt butter with cream, whisk in parmesan.", "Toss with the pasta and peas."] },
+
+    // ---- Soups & Stews ----
+    { id: "minestrone", name: "Minestrone Soup", category: "soup", weight: 1, desc: "Cannellini beans, tomato, small pasta, kale.", ingredients: "cannellini beans, diced tomato, carrot, celery, onion, small pasta, parmesan rind, kale", steps: ["Sauté carrot, celery, and onion.", "Add tomato and broth, simmer with pasta and beans.", "Stir in kale for the last few minutes."] },
+    { id: "split-pea-soup", name: "Split Pea Soup", category: "soup", weight: 1, desc: "Split peas, carrot, celery, smoked paprika.", ingredients: "split peas, carrot, celery, onion, vegetable broth, smoked paprika", steps: ["Sauté the aromatics.", "Add peas and broth, simmer 45 min until the peas break down.", "Blend partially if you like it smoother."] },
+    { id: "french-onion-soup", name: "French Onion Soup", category: "soup", weight: 1, desc: "Slow-caramelized onions, gruyère, baguette, broiled.", ingredients: "onions, vegetable broth, sherry or wine, gruyère, baguette", steps: ["Caramelize the onions slowly, about 40 min.", "Deglaze with sherry, add broth, simmer.", "Top with baguette and gruyère, broil until bubbly."] },
+    { id: "corn-chowder", name: "Corn Chowder", category: "soup", weight: 1, desc: "Corn, potato, cream, chives.", ingredients: "corn, potato, onion, celery, vegetable broth, cream, chives", steps: ["Sauté the aromatics.", "Add potato and broth, simmer until tender.", "Stir in corn and cream, top with chives."] },
+    { id: "miso-vegetable-soup", name: "Miso Vegetable Soup", category: "soup", weight: 1, desc: "Miso, tofu, mushroom, soba noodles.", ingredients: "miso paste, tofu, scallion, mushroom, seaweed, soba noodles", steps: ["Simmer mushrooms in broth.", "Whisk in miso off the heat (don't boil it).", "Add tofu and scallion, serve over soba."] },
+    { id: "tortilla-soup", name: "Tortilla Soup", category: "soup", weight: 1, desc: "Black bean and corn base, crispy tortilla strips, avocado.", ingredients: "black beans, corn, diced tomato, vegetable broth, cumin, tortilla strips, avocado, lime", steps: ["Simmer beans, corn, tomato, and cumin in broth 15 min.", "Top with crispy tortilla strips, avocado, and lime."] },
+    { id: "roasted-pepper-tomato-soup", name: "Roasted Red Pepper & Tomato Soup", category: "soup", weight: 1, desc: "Roasted pepper, tomato, cream, basil.", ingredients: "roasted red peppers, canned tomato, onion, garlic, cream, basil", steps: ["Sauté onion and garlic.", "Add peppers and tomato, simmer, then blend smooth.", "Swirl in cream, finish with basil."] },
+    { id: "white-bean-rosemary-stew", name: "White Bean & Rosemary Stew", category: "soup", weight: 1, desc: "Cannellini beans, rosemary, kale, parmesan.", ingredients: "cannellini beans, rosemary, garlic, carrot, kale, vegetable broth, parmesan rind", steps: ["Sauté garlic and carrot.", "Add beans, broth, and rosemary; simmer 20 min.", "Stir in kale until wilted."] },
+    { id: "curried-cauliflower-soup", name: "Curried Cauliflower Soup", category: "soup", weight: 1, desc: "Curry powder, coconut milk, cilantro.", ingredients: "cauliflower, curry powder, onion, coconut milk, vegetable broth, cilantro", steps: ["Sauté onion and curry powder.", "Add cauliflower and broth, simmer until tender.", "Blend with the coconut milk, top with cilantro."] },
+    { id: "loaded-potato-soup", name: "Loaded Potato Soup", category: "soup", weight: 1, desc: "Cheddar, sour cream, chives.", ingredients: "russet potatoes, onion, vegetable broth, cheddar, sour cream, chives", steps: ["Simmer potatoes and onion in broth until tender.", "Mash partially, stir in cheddar and sour cream.", "Top with chives."] },
+
+    // ---- Global Flavors ----
+    { id: "shakshuka", name: "Shakshuka", category: "global", weight: 1, desc: "Eggs poached in a spiced tomato-pepper sauce, feta.", ingredients: "canned tomatoes, bell pepper, onion, cumin, paprika, eggs, feta, crusty bread", steps: ["Sauté onion and pepper, add tomatoes and spices, simmer.", "Crack eggs into the sauce, cover, cook until just set.", "Top with feta, serve with bread."] },
+    { id: "falafel-pita", name: "Falafel Pita Wraps", category: "global", weight: 1, desc: "Falafel, hummus, cucumber, tomato, tahini.", ingredients: "falafel, pita, hummus, cucumber, tomato, pickled turnip, tahini sauce", steps: ["Warm the falafel.", "Fill pita with hummus, vegetables, and falafel.", "Drizzle with tahini."] },
+    { id: "pad-thai", name: "Vegetable Pad Thai", category: "global", weight: 1, desc: "Rice noodles, tofu, egg, peanuts, tamarind sauce.", ingredients: "rice noodles, tofu, bean sprouts, egg, peanuts, pad thai sauce, lime", steps: ["Soak the rice noodles.", "Stir-fry tofu and egg, add noodles and sauce.", "Toss with sprouts, top with peanuts and lime."] },
+    { id: "paneer-tikka-masala", name: "Paneer Tikka Masala", category: "global", weight: 1, desc: "Seared paneer or tofu in a creamy tomato curry.", ingredients: "paneer or tofu, tomato puree, cream, garam masala, onion, garlic, ginger, rice", steps: ["Sear the paneer.", "Sauté aromatics and spices, add tomato and cream, simmer.", "Add the paneer back, serve over rice."] },
+    { id: "vegetable-biryani", name: "Vegetable Biryani", category: "global", weight: 1, desc: "Layered spiced rice and vegetables, fried onions, mint.", ingredients: "basmati rice, mixed vegetables, biryani spice blend, yogurt, fried onions, mint", steps: ["Par-cook the rice.", "Layer with spiced vegetables, steam together.", "Top with fried onions and mint."] },
+    { id: "mediterranean-grain-bowl", name: "Mediterranean Grain Bowl", category: "global", weight: 1, desc: "Farro, chickpeas, cucumber, feta, olives.", ingredients: "farro or quinoa, chickpeas, cucumber, tomato, feta, olives, lemon-herb dressing", steps: ["Cook the grain.", "Toss everything with the dressing."] },
+    { id: "buddha-bowl", name: "Buddha Bowl with Peanut Sauce", category: "global", weight: 1, desc: "Sweet potato, chickpeas, kale, peanut sauce.", ingredients: "brown rice, roasted sweet potato, chickpeas, kale, peanut butter, soy sauce, lime", steps: ["Roast the sweet potato and chickpeas.", "Whisk the peanut sauce.", "Assemble the bowl over rice and kale."] },
+    { id: "bibimbap", name: "Bibimbap", category: "global", weight: 1, desc: "Sautéed vegetables, fried egg, gochujang, rice.", ingredients: "rice, spinach, carrot, bean sprouts, mushroom, egg, gochujang", steps: ["Sauté each vegetable separately.", "Fry the egg sunny-side up.", "Arrange over rice, top with gochujang."] },
+    { id: "vegetable-pho", name: "Vegetable Pho", category: "global", weight: 1, desc: "Star anise broth, rice noodles, tofu, herbs.", ingredients: "vegetable broth, star anise, cinnamon, rice noodles, tofu, bean sprouts, basil, lime", steps: ["Simmer the broth with spices 20 min.", "Cook the noodles.", "Assemble bowls with tofu and herbs, ladle broth over."] },
+    { id: "moroccan-chickpea-tagine", name: "Moroccan Chickpea Tagine", category: "global", weight: 1, desc: "Chickpeas, apricot, cinnamon, couscous.", ingredients: "chickpeas, dried apricot, tomato, cinnamon, cumin, couscous", steps: ["Sauté onion and spices.", "Add chickpeas, tomato, and apricot, simmer 20 min.", "Serve over couscous."] },
+    { id: "miso-ramen", name: "Miso Ramen", category: "global", weight: 1, desc: "Miso broth, jammy egg, corn, mushroom.", ingredients: "ramen noodles, miso, corn, soft-boiled egg, scallion, nori, mushroom", steps: ["Simmer broth with miso and mushroom.", "Cook the noodles.", "Top with the jammy egg, corn, scallion, nori."] },
+    { id: "spanish-tortilla", name: "Spanish Tortilla", category: "global", weight: 1, desc: "Potato and onion omelet, side salad.", ingredients: "potato, onion, eggs, olive oil, side salad", steps: ["Slowly cook potato and onion in oil until tender.", "Mix with beaten eggs.", "Cook in a skillet both sides until set."] },
+    { id: "vegetable-korma", name: "Vegetable Korma", category: "global", weight: 1, desc: "Cashew-coconut curry, mixed vegetables.", ingredients: "mixed vegetables, cashew, coconut milk, curry spices, rice", steps: ["Blend cashew and spices into a paste.", "Simmer with coconut milk and vegetables.", "Serve over rice."] },
+    { id: "halloumi-grain-bowl", name: "Halloumi Grain Bowl", category: "global", weight: 1, desc: "Seared halloumi, quinoa, roasted vegetables, tahini.", ingredients: "halloumi, quinoa, roasted vegetables, tahini dressing, pomegranate seeds", steps: ["Sear the halloumi until golden.", "Roast the vegetables.", "Assemble the bowl, drizzle with tahini."] },
+    { id: "vegetable-empanadas", name: "Vegetable Empanadas", category: "global", weight: 1, desc: "Black bean and corn filling, baked.", ingredients: "empanada dough, black beans, corn, cheese, cumin", steps: ["Fill dough rounds with the bean-corn-cheese mix.", "Fold and crimp.", "Bake at 400°F 20 min."] },
+    { id: "vegetable-tempura", name: "Vegetable Tempura with Dipping Sauce", category: "global", weight: 1, desc: "Crisp-fried vegetables, soy-mirin dip, rice.", ingredients: "sweet potato, zucchini, broccoli, tempura batter mix, soy-mirin dipping sauce, rice", steps: ["Slice the vegetables, dip in cold tempura batter.", "Fry in hot oil until light and crisp.", "Serve with dipping sauce and rice."] },
+    { id: "vegetable-jambalaya", name: "Vegetable Jambalaya", category: "global", weight: 1, desc: "Cajun rice with peppers, celery, red beans.", ingredients: "rice, bell pepper, celery, onion, canned tomato, cajun seasoning, red beans", steps: ["Sauté the vegetables.", "Add rice, tomato, broth, and cajun seasoning, simmer covered 20 min.", "Stir in the beans."] },
+    { id: "zaatar-roasted-veg-bowl", name: "Za'atar Roasted Vegetable Bowl", category: "global", weight: 1, desc: "Cauliflower and chickpeas, tahini, couscous.", ingredients: "cauliflower, chickpeas, za'atar, tahini, couscous, parsley", steps: ["Roast the cauliflower and chickpeas with za'atar.", "Serve over couscous with a tahini drizzle."] },
+    { id: "vegetable-curry-udon", name: "Vegetable Curry Udon", category: "global", weight: 1, desc: "Japanese curry roux, udon noodles, vegetables.", ingredients: "udon noodles, curry roux, carrot, onion, potato, snap peas", steps: ["Simmer the vegetables in curry roux and water until tender.", "Toss with the cooked udon."] },
+    { id: "roasted-veg-tostadas", name: "Roasted Vegetable Tostadas", category: "global", weight: 1, desc: "Black beans, roasted vegetables, queso fresco.", ingredients: "tostada shells, black beans, roasted seasonal vegetables, queso fresco, crema, lime", steps: ["Roast the vegetables until caramelized.", "Spread warmed beans on the tostada shells.", "Top with vegetables, queso fresco, crema, lime."] },
+    { id: "fresh-spring-rolls", name: "Fresh Spring Rolls with Peanut Sauce", category: "global", weight: 1, desc: "Rice paper, vermicelli, herbs, peanut dip.", ingredients: "rice paper wrappers, vermicelli noodles, carrot, cucumber, mint, peanut dipping sauce", steps: ["Soften rice paper briefly in warm water.", "Layer noodles, vegetables, and mint, roll tightly.", "Serve with peanut dipping sauce."] },
+    { id: "stuffed-sweet-potatoes", name: "Stuffed Sweet Potatoes", category: "global", weight: 1, desc: "Black beans, corn, cotija, lime crema.", ingredients: "sweet potato, black beans, corn, feta or cotija, lime crema", steps: ["Bake sweet potatoes until tender.", "Split and top with warmed beans and corn.", "Add cheese and crema."] },
+    { id: "vegetable-samosas", name: "Vegetable Samosas with Chutney", category: "global", weight: 1, desc: "Spiced potato and pea filling, mint chutney.", ingredients: "samosa wrappers, potato, peas, curry spices, mint chutney", steps: ["Cook a spiced potato-pea filling.", "Wrap and fold the samosas.", "Bake or fry until golden, serve with chutney."] },
+    { id: "spanakopita-bowls", name: "Spanakopita Bowls", category: "global", weight: 1, desc: "Deconstructed spinach-feta pie over lemon rice.", ingredients: "spinach, feta, phyllo triangles, lemon rice", steps: ["Bake the phyllo triangles per package.", "Serve over lemon rice with a side salad."] },
+    { id: "vegetable-katsu-curry", name: "Vegetable Katsu Curry", category: "global", weight: 1, desc: "Crispy breaded cutlet, Japanese curry, cabbage slaw.", ingredients: "breaded eggplant or tofu cutlet, Japanese curry roux, rice, cabbage slaw", steps: ["Bread and fry the cutlet until crisp.", "Simmer curry roux with vegetables.", "Serve over rice with the sliced cutlet and slaw."] },
+    { id: "roasted-veg-grain-bowl-miso", name: "Roasted Vegetable Grain Bowl with Miso Dressing", category: "global", weight: 1, desc: "Farro, roasted vegetables, edamame, miso-ginger dressing.", ingredients: "farro, roasted broccoli and carrots, edamame, miso-ginger dressing", steps: ["Roast the vegetables.", "Cook the farro.", "Whisk the dressing, assemble the bowl."] },
+    { id: "vegetable-kofta-curry", name: "Vegetable Kofta Curry", category: "global", weight: 1, desc: "Pan-fried veggie kofta in tomato curry sauce.", ingredients: "vegetable or paneer kofta, tomato curry sauce, rice or naan", steps: ["Pan-fry the kofta until browned.", "Simmer in the tomato curry sauce.", "Serve with rice or naan."] },
+    { id: "vegetable-congee", name: "Vegetable Congee", category: "global", weight: 1, desc: "Rice porridge, ginger, soft egg, chili oil.", ingredients: "rice, vegetable broth, ginger, scallion, soft-boiled egg, chili oil", steps: ["Simmer rice in broth with ginger, stirring occasionally, about 45 min until porridge-like.", "Ladle into bowls.", "Top with the soft egg, scallion, and chili oil."] },
+    { id: "egg-roll-bowls", name: "Vegetable Egg Roll Bowls", category: "global", weight: 1, desc: "Cabbage, carrot, plant crumble, soy-ginger, rice.", ingredients: "cabbage, carrot, plant-based crumble or extra tofu, soy sauce, ginger, rice", steps: ["Stir-fry the crumble with ginger.", "Add cabbage and carrot, season with soy sauce.", "Serve over rice."] },
+    { id: "chana-masala", name: "Chana Masala", category: "global", weight: 1, desc: "Chickpeas simmered in a spiced tomato sauce.", ingredients: "chickpeas, tomato, onion, garlic, ginger, garam masala, rice or naan", steps: ["Sauté onion, garlic, ginger, add the spices.", "Add tomato and chickpeas, simmer 15-20 min.", "Serve with rice or naan."] },
+    { id: "enchilada-casserole", name: "Vegetable Enchilada Casserole", category: "global", weight: 1, desc: "Layered tortillas, black beans, corn, enchilada sauce.", ingredients: "corn tortillas, black beans, corn, enchilada sauce, cheese", steps: ["Layer tortillas, beans, corn, sauce, and cheese like a lasagna.", "Bake at 375°F 25 min."] },
+    { id: "coconut-lentil-dal", name: "Coconut Lentil Dal", category: "global", weight: 1, desc: "Red lentils, turmeric, tempered spices, rice.", ingredients: "red lentils, coconut milk, turmeric, cumin, mustard seed, rice", steps: ["Simmer the lentils with turmeric until soft.", "Temper cumin and mustard seed in oil, stir in coconut milk.", "Pour the tempering over, serve with rice."] },
+    { id: "chow-fun", name: "Vegetable Chow Fun", category: "global", weight: 1, desc: "Wide rice noodles, dark soy sauce, bean sprouts.", ingredients: "wide rice noodles, bean sprouts, scallion, dark soy sauce, garlic, tofu", steps: ["Stir-fry garlic and tofu.", "Add noodles and dark soy sauce.", "Toss gently, add bean sprouts and scallion last."] },
+
+    // ---- Fandom Feast (vegetarian riffs on movie, game & book food) ----
+    { id: "flat-meat-fry-veg", name: "Flat Meat Fry (Veggie)", category: "fandom", weight: 0.6, desc: "The Mandalorian and Grogu's viral sandwich, veg-ified — blue onions, queso, crispy ciabatta.", ingredients: "ciabatta roll, plant-based deli slices or grilled halloumi, onion, blue food coloring, queso dip, oil, salt", steps: ["Thinly slice the onion, toss with a few drops of blue food coloring, season with salt, and slowly caramelize in oil.", "Pan-fry the plant-based deli slices or halloumi until browned and crisp.", "Layer onto a toasted ciabatta roll with the blue onions and a generous spoon of queso.", "Press in a panini maker or skillet until compressed and crisp, Roy Choi-style."] },
+    { id: "kraken-calamari", name: "Kraken \"Calamari\"", category: "fandom", weight: 0.6, desc: "A vegetarian nod to Sea of Thieves: The Cookbook's Kraken tentacles.", ingredients: "king oyster mushrooms or hearts of palm, flour, panko, Old Bay seasoning, marinara or lemon-caper aioli", steps: ["Slice the mushrooms or hearts of palm into rings.", "Dredge in flour, then a seasoned panko coating.", "Fry until golden and crisp.", "Serve with marinara or lemon-caper aioli."] },
+    { id: "tinas-house-chili", name: "Tina's House Chili", category: "fandom", weight: 0.6, desc: "Inspired by Tina's Vegan House Chili from Sea of Thieves: The Cookbook.", ingredients: "black beans, kidney beans, canned tomato, bell pepper, chili powder, cocoa powder, lime, cilantro", steps: ["Sauté onion and pepper.", "Add beans, tomato, chili powder, and a spoonful of cocoa powder.", "Simmer 25 min.", "Finish with lime and cilantro."] },
+    { id: "house-pasta", name: "House Pasta", category: "fandom", weight: 0.6, desc: "A veg version of the Official Wizarding World Cookbook's House Pasta.", ingredients: "pasta, yellow bell pepper, green beans, eggplant, roasted red pepper, olive oil, parmesan", steps: ["Roast each vegetable separately so the house colors stay distinct.", "Toss the cooked pasta with olive oil and parmesan.", "Arrange the four colors on top: yellow pepper, green beans, eggplant, roasted red pepper.", "Toss together at the table."] },
+    { id: "hagrids-soup", name: "Hagrid's Vegetable Soup", category: "fandom", weight: 0.6, desc: "A hearty, rustic soup inspired by Hagrid's Soup from the Official Wizarding World Cookbook.", ingredients: "potato, carrot, leek, turnip, vegetable broth, thyme, crusty bread", steps: ["Sauté the leek and carrot.", "Add potato, turnip, broth, and thyme; simmer until tender.", "Mash roughly for a rustic texture.", "Serve with crusty bread, oversized portions encouraged."] },
+    { id: "burrow-stew", name: "The Burrow's Vegetable Stew", category: "fandom", weight: 0.6, desc: "A cozy root-vegetable stew in the spirit of dinners at the Weasleys'.", ingredients: "potato, carrot, parsnip, peas, vegetable broth, thyme, puff pastry (optional)", steps: ["Simmer the root vegetables in broth with thyme until tender.", "Stir in peas at the end.", "Ladle into bowls, or top with puff pastry rounds and bake for a pot-pie twist."] },
+    { id: "choi-vegetable-bowl", name: "Roy Choi-Style Korean Vegetable Bowl", category: "fandom", weight: 0.6, desc: "Vegetable-forward Korean flavors, in the spirit of Roy Choi's The Choi of Cooking.", ingredients: "rice, gochujang, tofu or cauliflower, kimchi, sesame oil, scallion, fried egg", steps: ["Crisp the tofu or roasted cauliflower until browned.", "Whisk gochujang with sesame oil, toss the vegetables in it.", "Serve over rice with kimchi, scallion, and a fried egg."] },
+    { id: "sir-cadogan-skewers", name: "Sir Cadogan's Vegetable Skewers", category: "fandom", weight: 0.6, desc: "Grilled veg-and-halloumi skewers inspired by the Official Wizarding World Cookbook.", ingredients: "halloumi or paneer, bell pepper, zucchini, cherry tomato, red onion, olive oil, lemon, oregano", steps: ["Marinate the halloumi or paneer and vegetables briefly in oil, lemon, and oregano.", "Skewer, alternating pieces.", "Grill or broil, turning, until charred at the edges."] },
+    { id: "owl-post-crepes", name: "Owl Post Savoury Crepes", category: "fandom", weight: 0.6, desc: "Savory filled crepes inspired by the Official Wizarding World Cookbook.", ingredients: "crepe batter (flour, egg, milk), spinach, mushroom, gruyère, béchamel", steps: ["Make thin crepes.", "Sauté spinach and mushroom, fold with a little béchamel and gruyère.", "Fill and fold the crepes, warm through before serving."] },
+    { id: "knickerbocker-glory-toast", name: "Cauldron Cake Grilled Cheese", category: "fandom", weight: 0.6, desc: "A playful, oversized twist on Cauldron Cake — a giant sandwich, veg-ified.", ingredients: "large round crusty loaf or boule, sharp cheddar, caramelized onion, butter", steps: ["Hollow a round loaf slightly and slice it like a giant sandwich.", "Layer with cheddar and caramelized onion.", "Butter the outside and grill in a large skillet, pressing until golden and the cheese melts."] },
+
+    // ---- Special Occasion (smaller wedges) ----
+    { id: "eggplant-parm", name: "Eggplant Parmesan", category: "special", weight: 0.6, desc: "Breaded eggplant, marinara, mozzarella, basil.", ingredients: "eggplant, breadcrumbs, egg, marinara, mozzarella, parmesan, basil", steps: ["Bread and bake or fry the eggplant slices.", "Layer with marinara and both cheeses.", "Bake at 375°F 25 min until bubbly."] },
+    { id: "manicotti", name: "Manicotti", category: "special", weight: 0.6, desc: "Ricotta-stuffed pasta tubes, marinara, mozzarella.", ingredients: "manicotti shells, ricotta, mozzarella, egg, marinara, parmesan", steps: ["Cook the shells.", "Mix ricotta with egg and parmesan, stuff the shells.", "Top with marinara and mozzarella, bake at 375°F 25 min."] },
+    { id: "stuffed-shells", name: "Stuffed Shells", category: "special", weight: 0.6, desc: "Ricotta-spinach filling, jumbo shells, marinara.", ingredients: "jumbo shells, ricotta, spinach, mozzarella, marinara", steps: ["Cook the shells.", "Mix ricotta with wilted spinach, stuff the shells.", "Top with marinara and mozzarella, bake at 375°F 25 min."] },
+    { id: "mushroom-wellington", name: "Mushroom Wellington", category: "special", weight: 0.6, desc: "Mushroom-spinach duxelles wrapped in puff pastry.", ingredients: "puff pastry, mixed mushrooms, spinach, garlic, egg wash", steps: ["Sauté mushrooms and garlic until dry, wilt in the spinach.", "Wrap the mixture in puff pastry, brush with egg.", "Bake at 400°F 30-35 min until golden."] },
+    { id: "vegetable-pot-pie", name: "Vegetable Pot Pie", category: "special", weight: 0.6, desc: "Creamy vegetable filling under a golden pastry top.", ingredients: "puff pastry or pie crust, carrot, peas, potato, onion, vegetable broth, cream", steps: ["Make a creamy vegetable filling on the stovetop.", "Pour into a baking dish, top with pastry.", "Bake at 400°F until golden."] },
+    { id: "stuffed-acorn-squash", name: "Stuffed Acorn Squash", category: "special", weight: 0.6, desc: "Wild rice, cranberry, walnut, sage.", ingredients: "acorn squash, wild rice, cranberries, walnuts, sage", steps: ["Roast the squash halves until tender.", "Fill with wild rice mixed with cranberries and walnuts.", "Return to the oven 10 min."] },
+    { id: "classic-spanakopita", name: "Classic Spanakopita", category: "special", weight: 0.6, desc: "Layered phyllo, spinach, feta, dill.", ingredients: "phyllo dough, spinach, feta, egg, dill, butter", steps: ["Mix spinach, feta, egg, and dill.", "Layer buttered phyllo sheets with the filling.", "Bake at 375°F until golden and crisp."] },
+    { id: "homemade-pizza-night", name: "Homemade Pizza Night", category: "special", weight: 0.6, desc: "Stretched dough, sauce, cheese, your toppings.", ingredients: "pizza dough, tomato sauce, mozzarella, toppings of choice, basil", steps: ["Stretch the dough.", "Top with sauce, cheese, and toppings.", "Bake at the highest oven temp until the crust browns."] },
+    { id: "mushroom-risotto", name: "Mushroom Risotto", category: "special", weight: 0.6, desc: "Arborio rice, sautéed mushrooms, parmesan, stirred slow.", ingredients: "arborio rice, mushrooms, vegetable broth, white wine, parmesan, butter", steps: ["Sauté the mushrooms, set aside.", "Toast the rice, deglaze with wine.", "Add broth ladle by ladle, stirring, until creamy; fold in mushrooms and parmesan."] },
+    { id: "ratatouille", name: "Ratatouille", category: "special", weight: 0.6, desc: "Eggplant, zucchini, pepper, tomato, herbes de Provence.", ingredients: "eggplant, zucchini, bell pepper, tomato, herbes de Provence, crusty bread", steps: ["Sauté or layer the sliced vegetables with tomato sauce and herbs.", "Bake at 375°F 40 min until tender.", "Serve with crusty bread."] }
+  ];
+
+  var CATEGORY_META = {
+    weeknight: { label: "Weeknight", colors: ["#5f8b79", "#7ba696"], note: "" },
+    pasta: { label: "Pasta Night", colors: ["#a8873a", "#c7a55c"], note: "" },
+    soup: { label: "Soups & Stews", colors: ["#b5651d", "#d1834a"], note: "" },
+    global: { label: "Global Flavors", colors: ["#5fd4ff", "#a6ecff"], note: "" },
+    fandom: { label: "Fandom Feast", colors: ["#6C87C9", "#4F68A8"], note: "Vegetarian riffs on real recipes from the Mandalorian and Grogu movie, the Sea of Thieves and Wizarding World cookbooks, and Roy Choi's The Choi of Cooking — not verbatim, adapted to skip the meat." },
+    special: { label: "Special Occasion", colors: ["#9C6E9E", "#6C4770"], note: "Smaller slice on the wheel — save these for a slower night." }
+  };
+
+  var STORAGE_KEY = "dinnerWheelExcluded";
+  var excluded = loadExcluded();
+
+  function loadExcluded() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+
+  function saveExcluded() {
+    try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(excluded)); } catch (e) { /* ignore */ }
+  }
+
+  function isExcluded(id) { return excluded.indexOf(id) !== -1; }
+  function activeMeals() { return MEALS.filter(function (m) { return !isExcluded(m.id); }); }
+
+  // ---- Build menu board ----
+
+  var menuBoard = document.getElementById("menu-board");
+  var order = ["weeknight", "pasta", "soup", "global", "fandom", "special"];
+
+  order.forEach(function (catKey) {
+    var meta = CATEGORY_META[catKey];
+    var items = MEALS.filter(function (m) { return m.category === catKey; });
+
+    var details = document.createElement("details");
+    details.className = "category";
+
+    var summary = document.createElement("summary");
+    summary.className = "category-head " + catKey;
+    summary.innerHTML = '<span class="dot" aria-hidden="true"></span><h3>' + meta.label + '</h3><span class="count">' + items.length + '</span><span class="chevron" aria-hidden="true">▸</span>';
+    details.appendChild(summary);
+
+    if (meta.note) {
+      var note = document.createElement("p");
+      note.className = "category-note";
+      note.textContent = meta.note;
+      details.appendChild(note);
+    }
+
+    var list = document.createElement("div");
+    list.className = "dish-list";
+
+    items.forEach(function (m) {
+      var row = document.createElement("div");
+      row.className = "dish-row" + (isExcluded(m.id) ? " excluded" : "");
+      row.id = "row-" + m.id;
+
+      var cbId = "chk-" + m.id;
+      row.innerHTML =
+        '<input type="checkbox" id="' + cbId + '"' + (isExcluded(m.id) ? "" : " checked") + '>' +
+        '<label for="' + cbId + '"><span class="dish-name">' + m.name + '</span><span class="dish-desc">' + m.desc + '</span></label>';
+
+      row.querySelector("input").addEventListener("change", function (e) {
+        if (e.target.checked) {
+          excluded = excluded.filter(function (x) { return x !== m.id; });
+          row.classList.remove("excluded");
+        } else {
+          excluded.push(m.id);
+          row.classList.add("excluded");
+        }
+        saveExcluded();
+        updateCount();
+        buildWheel();
+      });
+
+      list.appendChild(row);
+    });
+
+    details.appendChild(list);
+    menuBoard.appendChild(details);
+  });
+
+  function updateCount() {
+    document.getElementById("active-count").textContent = String(activeMeals().length);
+  }
+  updateCount();
+
+  document.getElementById("reset-btn").addEventListener("click", function () {
+    excluded = [];
+    saveExcluded();
+    document.querySelectorAll(".dish-row").forEach(function (row) {
+      row.classList.remove("excluded");
+      row.querySelector("input").checked = true;
+    });
+    updateCount();
+    buildWheel();
+  });
+
+  // ---- Wheel drawing ----
+
+  var canvas = document.getElementById("wheel-canvas-el");
+  var ctx = canvas.getContext("2d");
+  var SIZE = 480;
+  var dpr = window.devicePixelRatio || 1;
+  canvas.width = SIZE * dpr;
+  canvas.height = SIZE * dpr;
+  ctx.scale(dpr, dpr);
+
+  var wheelData = [];
+  var rotation = 0;
+  var spinning = false;
+
+  function buildWheel() {
+    var pool = activeMeals();
+    var cx = SIZE / 2, cy = SIZE / 2, r = SIZE / 2 - 4;
+
+    ctx.clearRect(0, 0, SIZE, SIZE);
+    wheelData = [];
+
+    if (pool.length === 0) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = "#1c1620";
+      ctx.fill();
+      document.getElementById("spin-btn").disabled = true;
+      return;
+    }
+    document.getElementById("spin-btn").disabled = false;
+
+    var totalWeight = pool.reduce(function (s, m) { return s + m.weight; }, 0);
+    var cumulative = 0;
+    var shadeCounter = { weeknight: 0, pasta: 0, soup: 0, global: 0, fandom: 0, special: 0 };
+
+    pool.forEach(function (m) {
+      var sliceDeg = (m.weight / totalWeight) * 360;
+      var startDeg = cumulative;
+      var endDeg = cumulative + sliceDeg;
+
+      var startRad = (startDeg - 90) * Math.PI / 180;
+      var endRad = (endDeg - 90) * Math.PI / 180;
+
+      var colors = CATEGORY_META[m.category].colors;
+      var shade = colors[shadeCounter[m.category] % 2];
+      shadeCounter[m.category]++;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, startRad, endRad);
+      ctx.closePath();
+      ctx.fillStyle = shade;
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#130f16";
+      ctx.stroke();
+
+      wheelData.push({ meal: m, startDeg: startDeg, endDeg: endDeg });
+      cumulative = endDeg;
+    });
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#4a3d55";
+    ctx.stroke();
+  }
+
+  buildWheel();
+
+  function weightedPick(pool) {
+    var total = pool.reduce(function (s, m) { return s + m.weight; }, 0);
+    var r = Math.random() * total;
+    for (var i = 0; i < pool.length; i++) {
+      r -= pool[i].weight;
+      if (r <= 0) return pool[i];
+    }
+    return pool[pool.length - 1];
+  }
+
+  function spin() {
+    if (spinning) return;
+    var pool = activeMeals();
+    if (pool.length === 0) return;
+
+    spinning = true;
+    document.getElementById("spin-btn").disabled = true;
+
+    var chosen = weightedPick(pool);
+    var entry = wheelData.filter(function (w) { return w.meal.id === chosen.id; })[0];
+
+    var span = entry.endDeg - entry.startDeg;
+    var margin = Math.min(span * 0.3, 4);
+    var targetDeg = entry.startDeg + margin + Math.random() * Math.max(span - margin * 2, 0.001);
+
+    var baseRotation = (360 - targetDeg) % 360;
+    var currentMod = ((rotation % 360) + 360) % 360;
+    var delta = ((baseRotation - currentMod) + 360) % 360;
+    var extraSpins = 5 * 360;
+
+    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    rotation += (reduceMotion ? 0 : extraSpins) + delta;
+
+    canvas.style.transition = reduceMotion ? "none" : "transform 4.2s cubic-bezier(0.15, 0.67, 0.1, 1)";
+    canvas.style.transform = "rotate(" + rotation + "deg)";
+
+    var done = function () {
+      canvas.removeEventListener("transitionend", done);
+      showResult(chosen);
+      spinning = false;
+      document.getElementById("spin-btn").disabled = false;
+    };
+
+    if (reduceMotion) {
+      setTimeout(done, 50);
+    } else {
+      canvas.addEventListener("transitionend", done);
+    }
+  }
+
+  function showResult(meal) {
+    var nameEl = document.getElementById("ticket-name");
+    nameEl.textContent = meal.name;
+    nameEl.classList.remove("placeholder");
+    document.getElementById("ticket-desc").textContent = meal.desc;
+
+    var tagEl = document.getElementById("ticket-tag");
+    var label = CATEGORY_META[meal.category].label;
+    tagEl.innerHTML = '<span class="tag ' + meal.category + '"><span class="dot"></span>' + label + '</span>';
+
+    var stepsHtml = meal.steps.map(function (s) { return "<li>" + s + "</li>"; }).join("");
+    document.getElementById("ticket-recipe").innerHTML =
+      '<div class="recipe">' +
+      '<div class="recipe-label">Ingredients</div>' +
+      '<div class="ingredients-text">' + meal.ingredients + '.</div>' +
+      '<div class="recipe-label">Method</div>' +
+      '<ol class="steps-list">' + stepsHtml + '</ol>' +
+      '</div>';
+
+    document.getElementById("live-region").textContent = "Tonight's dinner: " + meal.name;
+  }
+
+  document.getElementById("spin-btn").addEventListener("click", spin);
+})();
+</script>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap-wide">
+    <span>&copy; John Salerno</span>
+    <span><a href="index.html">syncsalerno.com</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
