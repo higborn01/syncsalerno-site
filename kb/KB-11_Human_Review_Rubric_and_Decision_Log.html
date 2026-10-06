@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>KB-11 Human Review Rubric and Decision Log</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <meta name="robots" content="noindex, nofollow"><style>body{font-family:system-ui,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;line-height:1.5}table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px 8px;vertical-align:top}</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">KB-11 Human Review Rubric and Decision Log</h1>
+</header>
+<p><strong>KB-11: Human Review Rubric and Decision Log
+Template</strong></p>
+<p>Catalog Copilot Knowledge Base | Team-authored | v1.0, September
+2026</p>
+<p>Why This Exists</p>
+<p>Catalog Copilot drafts; people decide. This rubric is how a reviewer
+makes that decision the same way every time, and the decision log is how
+the retailer can later show who approved a description and why. That
+record is the difference between strong and weak augmentation in
+practice: the GPT changes how the work is done, but a named role is
+still accountable for every description that goes live.</p>
+<p>Roles</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 74%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Role</strong></th>
+<th><strong>Responsibility</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Category merchandiser</td>
+<td>Supplies product attributes, runs Catalog Copilot, fixes missing
+data, completes the first rubric pass</td>
+</tr>
+<tr class="even">
+<td>Brand reviewer</td>
+<td>Resolves every Tier 2 flag from KB-09, gives final sign-off, owns
+the published copy</td>
+</tr>
+<tr class="odd">
+<td>Catalog Copilot</td>
+<td>Drafts, self-checks against KB-01 and KB-09, and explains its
+choices; never approves anything</td>
+</tr>
+</tbody>
+</table>
+<p>Scoring Rubric</p>
+<p>Each draft is scored 1 to 4 on five criteria. A 4 means publish as
+written, a 3 means minor edits, a 2 means real rework, and a 1 means the
+draft fails on that criterion.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Criterion</strong></th>
+<th><strong>4</strong></th>
+<th><strong>3</strong></th>
+<th><strong>2</strong></th>
+<th><strong>1</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Accuracy (matches the attributes)</td>
+<td>Every fact traces to the source data</td>
+<td>One minor wording drift, no wrong facts</td>
+<td>A fact is overstated or a needed attribute is missing without a
+flag</td>
+<td>Any invented fact, number, or feature</td>
+</tr>
+<tr class="even">
+<td>Compliance (KB-09)</td>
+<td>No flags, or all flags resolved</td>
+<td>n/a (compliance is pass or fail at 4 or 1)</td>
+<td>n/a</td>
+<td>Any Tier 1 claim present, or an unresolved Tier 2 flag</td>
+</tr>
+<tr class="odd">
+<td>Voice (KB-01)</td>
+<td>Reads like the guide; no banned words</td>
+<td>One or two word swaps needed</td>
+<td>Tone is off in several places</td>
+<td>Reads like generic advertising</td>
+</tr>
+<tr class="even">
+<td>Format and platform (KB-01, KB-05, KB-07)</td>
+<td>Title, bullets, paragraph, and alt text all within limits</td>
+<td>One element slightly over length or out of order</td>
+<td>Several format problems</td>
+<td>Title over 150 characters or structure ignored</td>
+</tr>
+<tr class="odd">
+<td>Usefulness (KB-08)</td>
+<td>Answers the shopper's first questions up front</td>
+<td>Answers them, but not in the best order</td>
+<td>Leaves a key question unanswered</td>
+<td>Mostly adjectives, little information</td>
+</tr>
+</tbody>
+</table>
+<p>Decision Rules</p>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Decision</strong></th>
+<th><strong>When</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Approve</td>
+<td>Compliance is 4 and every other criterion is 3 or higher. Minor
+edits are made during review and logged.</td>
+</tr>
+<tr class="even">
+<td>Edit</td>
+<td>Compliance is 4 and at least one criterion is a 2. The merchandiser
+revises (or regenerates with notes) and the draft is scored again.</td>
+</tr>
+<tr class="odd">
+<td>Reject</td>
+<td>Compliance is 1, or Accuracy is 1. The draft is discarded, and the
+cause is logged so the prompt or knowledge base can be fixed.</td>
+</tr>
+</tbody>
+</table>
+<p>Rejections are the most useful rows in the log. If the same rule
+keeps failing, the fix belongs in the knowledge base or the GPT
+instructions, not in another round of manual edits.</p>
+<p>Decision Log Template</p>
+<p>One row per reviewed draft. Reviewers are recorded by ID, not by name
+or email, so the log can be shared for analysis without exposing who did
+the work.</p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 41%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Field</strong></th>
+<th><strong>What to Record</strong></th>
+<th><strong>Example</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>log_id</td>
+<td>Sequential log number</td>
+<td>L-0142</td>
+</tr>
+<tr class="even">
+<td>review_date</td>
+<td>Date of the decision</td>
+<td>2026-10-06</td>
+</tr>
+<tr class="odd">
+<td>sku_id</td>
+<td>Product identifier</td>
+<td>B07XYZ1234</td>
+</tr>
+<tr class="even">
+<td>version_id</td>
+<td>Draft version</td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td>draft_source</td>
+<td>copilot_draft or copilot_edited</td>
+<td>copilot_draft</td>
+</tr>
+<tr class="even">
+<td>reviewer_id</td>
+<td>Anonymized reviewer ID</td>
+<td>R-03</td>
+</tr>
+<tr class="odd">
+<td>score_accuracy ... score_usefulness</td>
+<td>Five rubric scores, 1 to 4</td>
+<td>4, 4, 3, 4, 3</td>
+</tr>
+<tr class="even">
+<td>flags_raised</td>
+<td>KB-09 rule IDs the GPT flagged</td>
+<td>T2-01</td>
+</tr>
+<tr class="odd">
+<td>flags_resolution</td>
+<td>Approved, qualified, or removed, per flag</td>
+<td>T2-01 removed</td>
+</tr>
+<tr class="even">
+<td>decision</td>
+<td>approve, edit, or reject</td>
+<td>approve</td>
+</tr>
+<tr class="odd">
+<td>edit_pct</td>
+<td>Approximate share of the draft the reviewer changed</td>
+<td>12%</td>
+</tr>
+<tr class="even">
+<td>notes</td>
+<td>Why, in one sentence</td>
+<td>Removed "eco-friendly"; no certification on file</td>
+</tr>
+<tr class="odd">
+<td>sign_off</td>
+<td>Brand reviewer ID for anything published</td>
+<td>R-01</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

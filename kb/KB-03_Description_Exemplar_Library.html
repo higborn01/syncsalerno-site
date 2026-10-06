@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>KB-03 Description Exemplar Library</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <meta name="robots" content="noindex, nofollow"><style>body{font-family:system-ui,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;line-height:1.5}table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px 8px;vertical-align:top}</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">KB-03 Description Exemplar Library</h1>
+</header>
+<p><strong>KB-03: Description Exemplar Library</strong></p>
+<p>Catalog Copilot Knowledge Base | Team-authored | v1.0, September
+2026</p>
+<p>How to Use This Library</p>
+<p>These sixteen pairs show Catalog Copilot what an approved description
+looks like, four per category. Each one starts with the attributes the
+GPT would be given, then the kind of seller copy we see in real
+listings, then the approved version and a note on what changed and why.
+The notes matter more than the copy. A model that only sees good output
+learns to imitate it; a model that sees the reasoning learns which rule
+to apply to the next product.</p>
+<p>The products and brand names (Fernhollow, Oakline Studio, Pantry
+&amp; Pine, Harlow Lane) are invented and modeled on the categories in
+KB-02. The "before" text is written to show common problems; it is not
+copied from any real listing. Two exemplars (the water bottle and the
+tote bag) keep an inference in the approved copy on purpose, with a note
+saying it should have been flagged, so the GPT sees that approved copy
+is not automatically perfect.</p>
+<p>Home goods</p>
+<p>Exemplar 01: Ceramic table lamp</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Fernhollow | material: ceramic base, linen shade | color:
+Sage | dimensions: 12 x 12 x 22 in | bulb: E26, 60W max, not included |
+cord: 6 ft</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>STUNNING Fernhollow lamp!!! This luxurious ceramic lamp will elevate
+any room in your home. Perfect for bedrooms, living rooms, offices and
+more. High quality and built to last. A must-have!</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Fernhollow Ceramic Table Lamp with Linen Shade, 22 Inch, Sage (61
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 22 in tall with a 12 in shade, sized for a nightstand or
+end table.</p>
+<p>Materials: Glazed ceramic base with a linen drum shade.</p>
+<p>Bulb: Takes one E26 bulb up to 60 watts; bulb not included.</p>
+<p>Cord: 6 ft cord reaches most outlets without an extension.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>This lamp gives a bedside table or reading corner a soft, even
+light. The sage glaze is muted enough to sit next to wood or white
+furniture, and the linen shade keeps the bulb from glaring.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Sage green ceramic table lamp with a white linen drum shade on a
+wooden nightstand.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>Removed five banned words (stunning, luxurious, elevate, perfect,
+must-have) and the exclamation points. "Built to last" had no support in
+the data, so it became material facts. Bulb limits were in the
+attributes and went into a bullet because they answer a real
+question.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 02: Cotton throw blanket</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Fernhollow | material: 100% cotton | color: Oatmeal | size:
+50 x 60 in | care: machine wash cold, tumble dry low | pattern: waffle
+weave</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Super soft eco-friendly throw blanket. Hypoallergenic and perfect
+for cuddling on the couch. Great gift idea! Best blanket you will ever
+own.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Fernhollow Waffle Weave Cotton Throw Blanket, 50 x 60 Inch, Oatmeal
+(67 characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 50 x 60 in, enough to cover one adult on a sofa.</p>
+<p>Material: 100% cotton in a waffle weave.</p>
+<p>Care: Machine wash cold and tumble dry low.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A light throw for the back of the couch or the foot of the bed. The
+waffle weave adds texture without much weight, so it works in warmer
+months as well as winter.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Oatmeal waffle weave cotton throw folded over the arm of a gray
+sofa.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Eco-friendly" is a T2-01 escalation and "hypoallergenic" is T1-02
+with no certification in the data; both were removed. "Best blanket you
+will ever own" is an unsupported superlative. The care instructions were
+in the data and are what shoppers check for a washable item.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 03: Round wall mirror</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Fernhollow | frame: iron, matte black | diameter: 24 in |
+depth: 1 in | weight: 7 lb | mounting: hanging hook, hardware
+included</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Modern round mirror, makes your room look bigger. Beautiful black
+frame. Easy to hang.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Fernhollow Round Wall Mirror with Iron Frame, 24 Inch, Matte Black
+(66 characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 24 in across and 1 in deep.</p>
+<p>Frame: Thin iron frame in a matte black finish.</p>
+<p>Mounting: Hangs from one hook on the back; hardware included.</p>
+<p>Weight: 7 lb.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A simple round mirror for an entryway, bathroom, or above a dresser.
+The thin frame keeps the focus on the glass, and at 7 lb it hangs on
+standard wall hardware.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Round mirror with a thin matte black iron frame hanging above a
+white dresser.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>The original was short but vague. "Easy to hang" became the actual
+mounting detail, and the weight was added because it tells the shopper
+what wall hardware they need.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 04: Storage basket set</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Fernhollow | material: seagrass, cotton liner | count: 3 |
+sizes: 10, 12, 14 in diameter | handles: yes</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Set of 3 natural sustainable seagrass baskets. Organize your whole
+home! Perfect storage solution.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Fernhollow Seagrass Storage Baskets with Handles, Set of 3 (58
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Sizes: Three nesting baskets, 10, 12, and 14 in across.</p>
+<p>Material: Woven seagrass with a removable cotton liner.</p>
+<p>Handles: Built-in handles on each basket.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>These baskets hold blankets, toys, or towels and nest inside each
+other when you do not need all three. The liner keeps small items from
+slipping through the weave.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Three woven seagrass baskets in graduated sizes with cotton liners,
+stacked beside a bookshelf.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Sustainable" is a T2-01 escalation. The fact that seagrass is a
+natural fiber is true, but that does not make a general environmental
+claim safe, so the material is stated plainly instead.</td>
+</tr>
+</tbody>
+</table>
+<p>Furniture</p>
+<p>Exemplar 05: Upholstered accent chair</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Oakline Studio | frame: solid wood legs, engineered wood
+frame | upholstery: polyester | color: Navy | dimensions: 28 x 30 x 33
+in | seat height: 18 in | capacity: 250 lb | assembly: legs attach,
+about 10 minutes</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Oakline accent chair, solid wood construction, super comfortable,
+holds up to 300 lbs. No tools needed!</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Oakline Studio Upholstered Accent Chair with Wood Legs, Navy (60
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 28 x 30 x 33 in with an 18 in seat height.</p>
+<p>Weight capacity: Holds up to 250 lb.</p>
+<p>Construction: Solid wood legs on an engineered wood frame,
+upholstered in polyester.</p>
+<p>Assembly: Screw on the legs; about 10 minutes.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A compact chair for a reading corner or the empty spot by a window.
+The 18 in seat height matches most sofas, so it can sit next to one
+without looking out of place.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Navy upholstered accent chair with tapered wood legs next to a floor
+lamp.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>This is the most important kind of fix. The seller copy said "solid
+wood construction" and "300 lbs"; the data says solid wood legs, an
+engineered frame, and 250 lb. Overstated capacity is a safety issue and
+was an Accuracy 1 on the KB-11 rubric.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 06: Three-shelf bookcase</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Oakline Studio | material: engineered wood, walnut finish |
+dimensions: 24 x 11 x 40 in | shelf capacity: 20 lb each | assembly:
+required, about 30 minutes | anchor kit: included</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Walnut bookcase for books and decor. Sturdy and stylish. Easy
+assembly.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Oakline Studio 3-Shelf Bookcase, 40 Inch, Walnut Finish (55
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 24 x 11 x 40 in; fits under most windows.</p>
+<p>Capacity: Each shelf holds up to 20 lb.</p>
+<p>Assembly: Required, about 30 minutes; wall anchor kit included.</p>
+<p>Finish: Engineered wood with a walnut finish.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A short bookcase that works as a nightstand, a hallway shelf, or
+storage under a window. Use the included anchor kit; any bookcase is
+safer attached to the wall.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Three-shelf walnut finish bookcase holding books and a small
+plant.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Sturdy" became the per-shelf capacity. "Easy assembly" became the
+time estimate from the data. The anchor kit was promoted to a bullet
+because it is a safety feature shoppers look for.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 07: Coffee table</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Oakline Studio | top: tempered glass | base: steel, black |
+dimensions: 42 x 22 x 17 in | assembly: required</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Modern glass coffee table. Scratch proof and shatter proof tempered
+glass. The ultimate centerpiece for your living room.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Oakline Studio Tempered Glass Coffee Table with Steel Base, 42 Inch
+(67 characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 42 x 22 x 17 in.</p>
+<p>Top: Tempered glass.</p>
+<p>Base: Black steel frame.</p>
+<p>Assembly: Required.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A glass top keeps a small living room from feeling crowded, since
+you can see the floor through it. The steel base gives it a clean,
+simple outline.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Rectangular glass coffee table with a black steel base in front of a
+beige sofa.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Scratch proof" and "shatter proof" are absolute claims that
+tempered glass does not meet; they fall under T1-04. The data only
+supports "tempered glass," so that is what the copy says.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 08: Platform bed frame</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Oakline Studio | size: Queen | material: steel frame, wood
+slats | height: 14 in | under-bed clearance: 12 in | box spring: not
+required | headboard: not included</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Queen bed frame, no box spring needed, tons of storage space under
+the bed! Headboard compatible.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Oakline Studio Queen Platform Bed Frame with Wood Slats, 14 Inch (64
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: Queen; no box spring needed.</p>
+<p>Under-bed space: 12 in of clearance for storage bins.</p>
+<p>Construction: Steel frame with wood slats.</p>
+<p>Headboard: Not included.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A low-profile frame that holds a mattress directly on wood slats.
+The 12 in of clearance fits most under-bed storage bins, which matters
+in a small bedroom.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Black steel queen platform bed frame with wood slats and storage
+bins underneath.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Tons of storage space" became 12 in of clearance. "Headboard
+compatible" was not in the data, so it was left out; the copy only says
+what the data says, that a headboard is not included.</td>
+</tr>
+</tbody>
+</table>
+<p>Kitchen</p>
+<p>Exemplar 09: Nonstick skillet</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Pantry &amp; Pine | diameter: 10 in | material: aluminum with
+ceramic nonstick coating | oven safe: 400 F | dishwasher: hand wash
+recommended | cooktops: gas, electric (not induction)</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Non-toxic ceramic pan, PFOA free, healthy cooking with no oil!
+Dishwasher safe. Works on all stovetops.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Pantry &amp; Pine Ceramic Nonstick Skillet, 10 Inch (47
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 10 in, sized for eggs and single portions.</p>
+<p>Coating: Ceramic nonstick over aluminum.</p>
+<p>Heat: Oven safe to 400 F; works on gas and electric cooktops (not
+induction).</p>
+<p>Care: Hand wash recommended.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>An everyday pan for eggs, pancakes, and quick sautés. Hand washing
+keeps the nonstick coating working longer.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>10 inch ceramic nonstick skillet with a fried egg on a gas
+burner.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>This one had four problems. "Non-toxic" (T1-02), "healthy cooking"
+(T1-01), "dishwasher safe" contradicts the data, and "all stovetops" is
+false for induction. "PFOA free" could be true but is not in the
+attributes, so it was flagged for the merchandiser to confirm.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 10: Glass food storage set</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Pantry &amp; Pine | material: borosilicate glass,
+polypropylene lids | count: 5 containers | capacities: 1, 2, 2, 3.5, 5
+cups | oven safe: glass only, to 450 F | dishwasher: yes | microwave:
+yes, lids vented</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>BPA free food safe glass containers! Go from freezer to oven.
+Eco-friendly alternative to plastic.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Pantry &amp; Pine Glass Food Storage Containers with Lids, Set of 5
+(63 characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Sizes: Five containers: 1, 2, 2, 3.5, and 5 cups.</p>
+<p>Oven and microwave: Glass bases are oven safe to 450 F; lids are
+microwave safe but not oven safe.</p>
+<p>Care: Dishwasher safe.</p>
+<p>Material: Borosilicate glass with polypropylene lids.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A set for leftovers and meal prep. Reheat in the microwave with the
+vented lid, or put the glass base straight in the oven.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Five glass food storage containers of different sizes with blue
+lids, stacked on a counter.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"BPA free" and "food safe" are T1-02 and T2-07; neither is in the
+attributes, so both were removed and flagged. "Eco-friendly alternative
+to plastic" is T2-01, and the lids are plastic. "Freezer to oven" was
+dropped because sudden temperature changes are not covered by the
+data.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 11: Bamboo cutting board</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Pantry &amp; Pine | material: bamboo | dimensions: 18 x 12 x
+0.75 in | features: juice groove | care: hand wash, oil
+occasionally</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Antibacterial bamboo cutting board, knife friendly and eco-friendly.
+The last cutting board you will ever need.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Pantry &amp; Pine Bamboo Cutting Board with Juice Groove, 18 x 12
+Inch (66 characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 18 x 12 in and 0.75 in thick.</p>
+<p>Juice groove: Catches liquid from meat and fruit.</p>
+<p>Care: Hand wash and oil occasionally.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A large board with room to chop a full meal's worth of vegetables.
+The groove around the edge keeps juice off the counter.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Rectangular bamboo cutting board with a juice groove and sliced
+tomatoes.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Antibacterial" (T1-02), "eco-friendly" (T2-01), and "last cutting
+board you will ever need" (T1-04) were all removed. The board has good
+real features; the copy did not need the claims.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 12: Stainless steel water bottle</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Pantry &amp; Pine | capacity: 24 oz | material: stainless
+steel, double-wall | insulation: cold 24 hr, hot 12 hr (manufacturer
+spec) | lid: leakproof screw cap | dishwasher: hand wash only</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Keeps drinks cold longer than any other bottle! 100% leakproof
+guarantee. #1 rated water bottle.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Pantry &amp; Pine Insulated Stainless Steel Water Bottle, 24 oz (59
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Insulation: Double-wall stainless steel keeps drinks cold up to
+24 hours or hot up to 12 hours (manufacturer rating).</p>
+<p>Lid: Screw cap designed to be leakproof.</p>
+<p>Size: Holds 24 oz.</p>
+<p>Care: Hand wash only.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A bottle for work, the gym, or a long drive. It holds a full day of
+water and fits in most car cup holders.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Stainless steel water bottle with a screw cap on a gym bench.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Longer than any other bottle" (T2-04) and "#1 rated" (T1-07) were
+removed. "100% leakproof guarantee" became "designed to be leakproof"
+since the data lists a leakproof cap but no guarantee. The hour ratings
+were kept but attributed to the manufacturer. "Fits in most car cup
+holders" is not in the data and should have been flagged; it is left in
+on purpose as a teaching example.</td>
+</tr>
+</tbody>
+</table>
+<p>Apparel accessories</p>
+<p>Exemplar 13: Leather belt</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Harlow Lane | material: genuine leather | width: 1.25 in |
+buckle: brass, removable | sizes: 30 to 44 in waist | color: Brown</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Premium full grain leather belt, handmade in USA. Lasts a
+lifetime.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Harlow Lane Genuine Leather Belt with Brass Buckle, 1.25 Inch, Brown
+(68 characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Sizing: Available for 30 to 44 in waists; order your pant waist
+size.</p>
+<p>Material: Genuine leather.</p>
+<p>Buckle: Removable brass buckle.</p>
+<p>Width: 1.25 in, fits standard belt loops.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A plain brown belt that works with jeans and khakis. The buckle
+comes off, so you can swap it later.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Brown leather belt with a brass buckle coiled on a wooden
+surface.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>The seller said "full grain"; the data says "genuine leather," which
+is a different grade. "Handmade in USA" is T2-03 and was escalated.
+"Lasts a lifetime" is T1-04. This is a good example of why material
+words must match the data word for word.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 14: Knit beanie</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Harlow Lane | material: 50% acrylic, 50% wool | size: one
+size | color: Charcoal | care: hand wash cold, lay flat</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Warmest beanie ever! Itch free and super cozy.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Harlow Lane Rib Knit Wool Blend Beanie, One Size, Charcoal (58
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Material: 50% acrylic, 50% wool.</p>
+<p>Fit: One size, stretch rib knit.</p>
+<p>Care: Hand wash cold and lay flat to dry.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>An everyday winter hat with a close, stretchy fit. The wool blend
+adds warmth without the weight of a full wool knit.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Charcoal rib knit beanie folded on a white background.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Warmest ever" is T2-04 and "itch free" is a comfort claim with no
+support; wool blends can itch for some people. The blend percentages
+answer the real question behind "itch free."</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 15: Canvas tote bag</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Harlow Lane | material: cotton canvas | dimensions: 16 x 5 x
+14 in | strap drop: 11 in | pockets: 1 interior zip | closure: magnetic
+snap</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Huge tote bag fits everything! Reusable and sustainable. Perfect for
+beach, work, shopping.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Harlow Lane Cotton Canvas Tote Bag with Zip Pocket, 16 x 14 Inch (64
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Size: 16 x 5 x 14 in; fits a 15 in laptop.</p>
+<p>Strap drop: 11 in, long enough to carry on the shoulder.</p>
+<p>Storage: One interior zip pocket and a magnetic snap closure.</p>
+<p>Material: Cotton canvas.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A sturdy everyday bag for work or errands. The zip pocket keeps keys
+and a phone from sinking to the bottom.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Natural cotton canvas tote bag with a laptop and notebook
+inside.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Sustainable" is T2-01. "Huge" became dimensions. "Fits a 15 in
+laptop" is an inference from the dimensions and should have been flagged
+for the merchandiser to confirm before publishing.</td>
+</tr>
+</tbody>
+</table>
+<p>Exemplar 16: Polarized sunglasses</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Part</strong></th>
+<th><strong>Content</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Attributes given</td>
+<td>brand: Harlow Lane | frame: acetate, tortoise | lens: polarized,
+UV400 | lens width: 52 mm | case: included</td>
+</tr>
+<tr class="even">
+<td>Before (seller copy)</td>
+<td>Protect your eyes with doctor recommended polarized sunglasses.
+Blocks 100% of harmful rays. Unbreakable frame.</td>
+</tr>
+<tr class="odd">
+<td>After: title</td>
+<td>Harlow Lane Polarized Sunglasses, Tortoise Acetate Frame, 52 mm (63
+characters)</td>
+</tr>
+<tr class="even">
+<td>After: bullets</td>
+<td><p>Lenses: Polarized with UV400 protection.</p>
+<p>Frame: Tortoise acetate.</p>
+<p>Size: 52 mm lens width, a medium fit.</p>
+<p>Included: Protective case.</p></td>
+</tr>
+<tr class="odd">
+<td>After: description</td>
+<td>A classic tortoise frame that works with most face shapes. Polarized
+lenses cut glare from water and pavement.</td>
+</tr>
+<tr class="even">
+<td>After: alt text</td>
+<td>Tortoise shell acetate sunglasses resting on a folded case.</td>
+</tr>
+<tr class="odd">
+<td>What changed</td>
+<td>"Doctor recommended" is an endorsement claim with nothing behind it
+(T1-05). "Unbreakable" is T1-04. "Blocks 100% of harmful rays" was
+replaced by UV400, which is the actual rating in the data; the reviewer
+can decide whether to explain what UV400 means.</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

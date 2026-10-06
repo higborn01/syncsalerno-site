@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>KB-08 Product Page UX Research Summary</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <meta name="robots" content="noindex, nofollow"><style>body{font-family:system-ui,sans-serif;max-width:60rem;margin:2rem auto;padding:0 1rem;line-height:1.5}table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px 8px;vertical-align:top}</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">KB-08 Product Page UX Research Summary</h1>
+</header>
+<p><strong>KB-08: Product Page UX Research Summary</strong></p>
+<p>Catalog Copilot Knowledge Base | Team-authored | v1.0, September
+2026</p>
+<p>Scope and Sources</p>
+<p>This is our summary of free, public articles from the Baymard
+Institute and the Nielsen Norman Group on how shoppers read product
+pages. We did not use or upload any of Baymard's paid research, and
+nothing here is quoted at length; it is written in our own words so the
+GPT can apply the principles without us redistributing anyone's licensed
+material. The findings are general principles, not numbers, because a
+paraphrased statistic without the underlying study is exactly the kind
+of claim this project is trying to avoid.</p>
+<p>1. Shoppers Scan Before They Read</p>
+<p>Nielsen Norman Group's eyetracking work on web reading found that
+people scan in patterns, most famously an F shape, fixing on the start
+of lines and on the first few words of each block. On a product page
+that means the first words of a title and the bold label on each bullet
+do most of the work. The GPT should put the deciding information (size,
+material, the main use) at the very front of each bullet, not at the end
+of a sentence.</p>
+<p>2. Descriptions Should Answer Questions, Not Sell Adjectives</p>
+<p>Both groups report the same failure from different angles: shoppers
+leave or return products when the page did not answer a basic question,
+and the most common missing answers are dimensions, materials, and what
+is included. Marketing language does not substitute for that
+information, and in Baymard's testing shoppers tended to skip past it.
+This is the research reason behind the "specific over impressive" rule
+in KB-01.</p>
+<p>3. Separate Highlights From Specifications</p>
+<p>Baymard recommends keeping a short set of highlights near the top and
+a structured specification list further down, instead of burying specs
+in a paragraph. For Catalog Copilot that maps to bullets for the three
+to five things that drive the decision and a clean attribute list the
+page template can render as a table. The GPT should not cram every
+attribute into the bullets.</p>
+<p>4. Make Scale Obvious</p>
+<p>Shoppers misjudge size from photos, and that is a common source of
+"not as described" returns. Dimensions should be stated in the first
+bullet for anything where size matters, and alt text or image notes
+should mention scale when the image shows it (for example, a lamp next
+to a sofa). Where a reference object helps, the copy can use one that is
+concrete and common, such as "fits a standard 12-inch shelf."</p>
+<p>5. Consistency Across Products</p>
+<p>Pages that use the same structure for every product in a category are
+easier to compare. This is one of the stronger arguments for using a GPT
+at all: it applies the same format to the thousandth product that it
+applied to the first, which a team of tired merchandisers does not
+always manage.</p>
+<p>6. How the GPT Should Use This File</p>
+<ul>
+<li><p>Use it to decide order and structure: which bullet goes first,
+what belongs in specs, where dimensions appear.</p></li>
+<li><p>Cite it when a reviewer asks why a draft is structured a certain
+way.</p></li>
+<li><p>Do not quote numbers or percentages from it; there are none, on
+purpose.</p></li>
+<li><p>When it conflicts with KB-01 on format, KB-01 wins; this file
+explains the reasons, KB-01 sets the rules.</p></li>
+</ul>
+<p>Sources</p>
+<p>Links should be confirmed by the group before submission, since both
+sites reorganize their article libraries.</p>
+<p>Baymard Institute. (n.d.). Product page UX: Articles and guidelines.
+https://baymard.com/blog</p>
+<p>Nielsen Norman Group. (2017). F-shaped pattern of reading on the web:
+Misunderstood, but still relevant (even on mobile).
+https://www.nngroup.com/articles/f-shaped-pattern-reading-web-content/</p>
+<p>Nielsen Norman Group. (n.d.). Ecommerce UX articles.
+https://www.nngroup.com/topic/e-commerce/</p>
+</body>
+</html>
