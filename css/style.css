@@ -836,11 +836,11 @@ body.writing-page::before { display: none; }
   justify-content: center;
   cursor: pointer;
   z-index: 4;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: scale 0.15s ease, background 0.15s ease;
 }
 
-.dinner-wheel-page .hub:hover:not(:disabled) { background: var(--brass-soft); transform: translate(-50%, -50%) scale(1.04); }
-.dinner-wheel-page .hub:active:not(:disabled) { transform: translate(-50%, -50%) scale(0.97); }
+.dinner-wheel-page .hub:hover:not(:disabled) { background: var(--brass-soft); scale: 1.04; }
+.dinner-wheel-page .hub:active:not(:disabled) { scale: 0.97; }
 .dinner-wheel-page .hub:disabled { background: var(--bg-alt); color: var(--cream-soft); cursor: not-allowed; }
 .dinner-wheel-page .hub:focus-visible { outline: 3px solid var(--tesla); outline-offset: 3px; }
 
