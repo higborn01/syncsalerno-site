@@ -78,7 +78,24 @@ export function emojiFor(item) {                       // best emoji for an item
 // ---------------------------------------------------------------- what can I cook?
 const STAPLES = new Set(["salt", "pepper", "black pepper", "water", "oil", "olive oil", "vegetable oil",  // never "missing"
   "salt and pepper", "cooking spray", "ice"]);
+// describing words that don't change WHAT the food is ('shredded mozzarella' is still mozzarella)
+const SOFT = new Set(`fresh frozen dried canned chopped diced sliced minced shredded grated ground whole baby large small
+  extra unsalted salted plain organic raw cooked day old jumbo mini of and the a pure fancy crushed roasted red
+  yellow white brown sharp mild heavy firm wide fried boiled soft hard scrambled poached caramelized toasted
+  steamed crusty sandwich long grain basmati jasmine regular light opened unopened labeled russet ceylon elbow`.split(/\s+/));
+// brand / store words in item names (ignored)
+const BRANDS = new Set(`gv great value barilla trader joe newman own heinz king arthur fleischmann mccormick cacique marukan
+  lee kum kee one dakin farm walkerswood san marco tai pei gardein nature valley duncan hine dolce flav
+  savannah bee garden life golden publix better than`.split(/\s+/));
+// container words: ignored in item names, and in recipes except stick/cup ('mozzarella sticks' isn't mozzarella!)
+const PACKAGING = new Set(["jar", "bag", "can", "box", "bottle", "container", "pack", "pkg", "carton", "tub", "block",
+  "shaker", "pint", "gal", "bunch", "stick", "cup"]);
+const KEEP_IN_RECIPES = new Set(["stick", "cup"]);
 const SYNONYMS = {                                     // recipe keyword -> pantry words that also count
+  "hot sauce": ["sriracha", "buffalo hot sauce", "carrot hot sauce", "honey hot sauce"],
+  "salsa": ["salsa verde"], "vinegar": ["balsamic vinegar", "rice vinegar"],
+  "chili paste": ["sambal oelek"], "sambal": ["sambal oelek"],
+  "curry roux": ["curry"], "curry block": ["curry"], "japanese curry": ["curry"],
   "vegetable broth": ["bouillon"], "veg broth": ["bouillon"], "broth": ["bouillon"], "vegetable stock": ["bouillon"],
   "stock": ["bouillon"], "scallion": ["green onion"], "cheddar": ["cheese"], "sharp cheddar": ["cheese"],
   "shredded cheddar": ["cheese", "colby"], "shredded cheese": ["colby", "mozzarella", "cheese"], "mexican blend": ["colby"],
@@ -87,8 +104,6 @@ const SYNONYMS = {                                     // recipe keyword -> pant
   "crusty bread": ["bread"], "sourdough": ["bread"], "bun": ["bread"], "heavy cream": ["whipping cream"],
   "cream": ["whipping cream"], "lemon": ["lemon juice"], "lime juice": ["lime"],
 };
-const GENERIC = new Set(["bean", "sauce", "oil", "powder", "paste", "seasoning", "mix", "juice", "pepper",  // too vague alone
-  "vinegar", "cream", "extract", "spice", "cheese", "flake", "seed", "leaf", "cup", "bar"]);
 
 function singular(w) {                                 // beans -> bean, tomatoes -> tomato, berries -> berry
   if (w.endsWith("ss") || w.endsWith("us") || w.length <= 3) return w;  // 'swiss', 'hummus', short words: leave
@@ -106,19 +121,23 @@ function words(text) {                                 // 'Black Beans (canned)'
 export const inStock = (item) => item.qty === null || item.qty === undefined || item.qty > 0;  // OK, Low or ?
 
 function makeMatcher(items) {                          // returns has(keyword) -> true/false
-  const profiles = items.filter(inStock).map((item) => {  // one profile per in-stock item
-    const name = item.name.toLowerCase().replace(/\([^)]*\)/g, " ");  // name without brackets
-    const cores = new Set(name.split(/\/|\bor\b/).map((a) => words(a).at(-1)).filter(Boolean));  // last word of each '/' alternative
-    return { all: new Set(words(name)), cores };       // all words + main nouns
-  });
+  const foods = [];                                    // one {head, extra} per food in stock
+  for (const item of items.filter(inStock)) {          // in-stock items only
+    const name = item.name.toLowerCase().replace(/\([^)]*\)/g, " ");  // name without (brackets)
+    for (const alt of name.split(/\/|\bor\b/)) {       // 'Tortillas / wraps' -> each is a food
+      const w = words(alt).filter((x) => !PACKAGING.has(x) && !BRANDS.has(x) && x.length > 1);  // drop jar / GV / etc.
+      if (w.length) foods.push({ head: w.at(-1), extra: w.slice(0, -1) });  // main word = last; the rest describe it
+    }
+  }
   return (keyword) => {
     for (const phrase of [keyword, ...(SYNONYMS[keyword] || [])]) {  // keyword, then its synonyms
-      const kw = words(phrase);                        // its words
-      if (!kw.length) continue;                        // nothing usable
-      const head = kw.at(-1);                          // main noun = last word
-      for (const p of profiles) {
-        if (kw.every((w) => p.all.has(w))) return true;              // rule 1: every keyword word in the item name
-        if (!GENERIC.has(head) && p.cores.has(head)) return true;    // rule 2: same main noun
+      const kw = words(phrase).filter((x) => !PACKAGING.has(x) || KEEP_IN_RECIPES.has(x));  // recipe words minus containers
+      if (!kw.length) continue;
+      const head = kw.at(-1), extra = kw.slice(0, -1);  // main word + describing words
+      for (const f of foods) {
+        if (f.head === head                            // same main word...
+          && f.extra.every((x) => extra.includes(x) || SOFT.has(x))  // ...item's extra words are in the recipe or harmless
+          && extra.every((x) => f.extra.includes(x) || SOFT.has(x))) return true;  // ...and the recipe's are in the item or harmless
       }
     }
     return false;

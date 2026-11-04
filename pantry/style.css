@@ -248,17 +248,74 @@ select.filter { padding: 6px 12px; border: 2.5px solid var(--ink); border-radius
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* ---------------------------------------------------------------- spiral notebook (tabs + pages) */
+:root {
+  --paper: #fffdf2;                               /* notebook-paper cream */
+  --comic: "Comic Neue", "Comic Sans MS", "Chalkboard SE", cursive;  /* comic font (Chalkboard = iPhone's comic-ish font) */
+  --coil: #8a96a3;                                /* metal spiral colour */
+}
+.tabs {                                           /* the notebook's top: paper strip with a spiral binding */
+  max-width: 720px; margin: 8px auto 0; padding: 30px 14px 0; gap: 6px; justify-content: stretch;
+  background: var(--paper); border: 3px solid var(--ink); border-bottom: none; border-radius: 22px 22px 0 0;
+  font-family: var(--comic);
+  position: sticky;
+}
+.tabs::before {                                   /* punched holes along the top */
+  content: ""; position: absolute; left: 14px; right: 14px; top: 13px; height: 9px;
+  background: radial-gradient(circle, var(--ink) 0 4px, transparent 4.5px) 0 0 / 24px 9px repeat-x;
+}
+.tabs::after {                                    /* metal coil loops poking up through the holes */
+  content: ""; position: absolute; left: 14px; right: 14px; top: -12px; height: 30px;
+  background: radial-gradient(ellipse 7px 14px at 12px 15px, transparent 0 4px, var(--coil) 4.5px 7px, transparent 7.5px) 0 0 / 24px 30px repeat-x;
+  -webkit-mask: linear-gradient(#000 0 60%, transparent 60%);  /* only the top part of each loop shows above the paper */
+          mask: linear-gradient(#000 0 60%, transparent 60%);
+}
+.tabs button {                                    /* coloured index tabs */
+  flex: 1; justify-content: center; font-family: var(--comic); font-weight: 700; font-size: 17px;
+  border-radius: 16px 16px 0 0; border-bottom: none; box-shadow: none;
+  background: color-mix(in srgb, var(--tab) 45%, white);  /* paler when not selected */
+  padding: 8px 8px 6px; margin-top: 6px;
+}
+.tabs button.active { background: var(--tab); margin-top: 0; padding-bottom: 12px; }  /* selected tab sticks up higher */
+.tabs button:active { transform: none; }
+.tabs [data-view="shelves"]   { --tab: #ffd166; }  /* tab colours, same as the desktop app */
+.tabs [data-view="shopping"]  { --tab: #7ed957; }
+.tabs [data-view="cook"]      { --tab: #ffa36c; }
+.tabs [data-view="leftovers"] { --tab: #8ec5ff; }
+
+.panel .card {                                    /* pages = lined notebook paper with a red margin */
+  font-family: var(--comic); font-size: 17px; border-radius: 0 0 26px 26px; margin-top: 0;
+  background:
+    linear-gradient(90deg, transparent 30px, #ff9aa2 30px 32px, transparent 32px),  /* red margin line */
+    repeating-linear-gradient(var(--paper) 0 29px, #bfe0f5 29px 30px);             /* blue ruled lines */
+  padding-left: 46px;                             /* write to the right of the margin */
+}
+.panel .card h2, .panel .card h3 { font-family: var(--comic); font-weight: 700; }
+.panel .card .btn, .panel select.filter, .panel input { font-family: var(--comic); font-weight: 700; }
+.panel .check, .panel .dish, .panel .leftover { border-bottom-color: transparent; }  /* the ruled lines do the separating */
+.view.panel { padding-top: 0; }                   /* page sits right under the tabs */
+body:has(#view-shelves.active) .tabs {            /* on the shelves there's no page below, so close the notebook's bottom edge */
+  border-bottom: 3px solid var(--ink); border-radius: 22px; padding-bottom: 10px; margin-bottom: 10px;
+}
+body:has(#view-shelves.active) .tabs button { border-bottom: 2.5px solid var(--ink); border-radius: 16px; }
+
 /* ---------------------------------------------------------------- phones */
 @media (max-width: 760px) {
   .scene { grid-template-columns: 1fr; }          /* units one above another */
   .counts { display: none; }                      /* not enough room in the top bar */
   .brand span { display: none; }                  /* logo only */
-  .tabs {                                         /* tabs move to the bottom, easy to reach with a thumb */
-    position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 25;
-    padding: 8px 8px calc(8px + var(--safe-b)); background: #fff; border-top: 3px solid var(--ink); gap: 4px;
+  .tabs, body:has(#view-shelves.active) .tabs {   /* tabs move to the bottom (easy to reach with a thumb), still a spiral notebook */
+    position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 25; max-width: none; margin: 0;
+    padding: 26px 8px calc(8px + var(--safe-b)); background: var(--paper); gap: 4px;
+    border: none; border-top: 3px solid var(--ink); border-radius: 0;
   }
-  .tabs button { flex: 1; flex-direction: column; gap: 0; padding: 4px 2px; font-size: 20px; box-shadow: none; border-width: 2px; }
-  .tabs button span { font-size: 11px; }
+  .tabs button, body:has(#view-shelves.active) .tabs button {  /* index tabs, all the same height */
+    flex: 1; flex-direction: column; gap: 0; padding: 4px 2px; margin: 0; font-size: 20px;
+    border: 2px solid var(--ink); border-radius: 14px;
+  }
+  .tabs button.active { padding-bottom: 4px; transform: translateY(-4px); }  /* selected tab pops up a little */
+  .panel .card { border-radius: 26px; }           /* full rounded page on phones (tabs are at the bottom) */
+  .tabs button span { font-size: 12px; }
   .fab { bottom: calc(92px + var(--safe-b)); }    /* above the bottom tabs */
   .toast { bottom: calc(170px + var(--safe-b)); }
   .view { padding-bottom: 180px; }
