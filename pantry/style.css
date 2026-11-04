@@ -1,14 +1,15 @@
-/* style.css - cartoony look: thick dark outlines, bright flat colours, big round corners,
-   chunky "hard" drop shadows, icy sky + snow. */
+/* style.css - emo cartoon look: thick ink outlines, black / white / grey with a red accent,
+   big round corners, chunky "hard" drop shadows, charcoal night + falling ash. */
 
 :root {
-  --ink: #1f2d3d;                 /* the thick dark outline colour */
-  --sky-top: #9fd8ff;             /* sky at the top */
-  --sky-bottom: #e6f6ff;          /* sky near the ground */
-  --ok: #46d160;                  /* status colours */
-  --low: #ffbe0b;
-  --out: #ff4d5e;
-  --unknown: #b0bac5;
+  --ink: #0a0a0a;                 /* the thick ink-black outline colour */
+  --edge: #f5f5f5;                /* chalk-white edge so black things show on the dark background */
+  --sky-top: #050505;             /* night at the top */
+  --sky-bottom: #333333;          /* charcoal near the ground */
+  --ok: #ffffff;                  /* status colours: white OK, pink-red Low, red Out, grey ? */
+  --low: #ff9e9e;
+  --out: #e01b24;                 /* also the one accent colour */
+  --unknown: #8c8c8c;
   --font: "Fredoka", "Segoe UI", system-ui, sans-serif;  /* bubbly font, with fallbacks */
   --safe-b: env(safe-area-inset-bottom, 0px);            /* space for the iPhone home bar */
 }
@@ -19,14 +20,15 @@ html, body { margin: 0; }          /* no default gap around the page */
 body {
   font-family: var(--font);        /* cartoon font everywhere */
   color: var(--ink);               /* dark text */
-  background:                      /* sky: scattered snowflakes on top of a blue fade */
-    radial-gradient(circle at 20% 30%, #fff 0 2px, transparent 3px) 0 0 / 140px 120px,
-    radial-gradient(circle at 70% 60%, #fff 0 1.5px, transparent 2.5px) 0 0 / 110px 95px,
+  background:                      /* night: scattered grey ash on top of a black fade */
+    radial-gradient(circle at 20% 30%, #8c8c8c 0 2px, transparent 3px) 0 0 / 140px 120px,
+    radial-gradient(circle at 70% 60%, #8c8c8c 0 1.5px, transparent 2.5px) 0 0 / 110px 95px,
     linear-gradient(var(--sky-top), var(--sky-bottom) 70%) fixed;
   min-height: 100vh;               /* fill the screen */
   -webkit-tap-highlight-color: transparent;  /* no grey flash when tapping on iPhone */
 }
 button, input, select, textarea { font: inherit; color: inherit; }  /* form controls use the cartoon font too */
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2.5px solid var(--out); outline-offset: 1px; }  /* red ring on the box you're typing in */
 
 /* ---------------------------------------------------------------- top bar */
 .topbar {
@@ -37,13 +39,13 @@ button, input, select, textarea { font: inherit; color: inherit; }  /* form cont
   border-bottom: 3px solid var(--ink);            /* cartoon outline */
 }
 .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 24px; }  /* logo + name */
-.brand img { width: 34px; height: 34px; }         /* fridge logo size */
+.brand img { width: 34px; height: 34px; filter: grayscale(1); }  /* fridge logo size, in black & white */
 #search {                                         /* search box */
   flex: 1; min-width: 0; max-width: 340px;        /* stretches, but not too wide */
   padding: 8px 14px; border: 2.5px solid var(--ink); border-radius: 999px;  /* pill shape */
   background: #fff; outline: none;
 }
-#search:focus { box-shadow: 0 0 0 3px var(--low); }  /* yellow ring while typing */
+#search:focus { box-shadow: 0 0 0 3px var(--out); }  /* red ring while typing */
 .counts { margin-left: auto; font-weight: 500; white-space: nowrap; }  /* pushed to the right */
 .icon-btn {                                       /* round ⋯ button */
   width: 40px; height: 40px; flex: none; border-radius: 50%;
@@ -61,7 +63,7 @@ button, input, select, textarea { font: inherit; color: inherit; }  /* form cont
   background: #fff; font-weight: 600; cursor: pointer;
   box-shadow: 2px 3px 0 var(--ink);               /* hard cartoon shadow */
 }
-.tabs button.active { background: var(--low); }   /* selected tab = yellow */
+.tabs button.active { background: var(--ok); }    /* selected tab = white (the notebook rules below set the real colour) */
 .tabs button:active { transform: translate(2px, 3px); box-shadow: none; }  /* "pressed in" */
 
 .view { display: none; padding: 6px 16px 120px; }  /* only the active view shows; room at the bottom for the + button */
@@ -81,24 +83,24 @@ button, input, select, textarea { font: inherit; color: inherit; }  /* form cont
 }
 .scene.single { grid-template-columns: minmax(0, 700px); justify-content: center; }  /* one unit shown */
 .column { display: flex; flex-direction: column; gap: 34px; }  /* units stacked (counter on pantry, freezer on fridge) */
-.snow {                                           /* snowy ground the units stand on */
-  height: 70px; margin: -14px -16px 0; background: #fff;
-  border-top: 3px solid #a9cfe8; border-radius: 50% 50% 0 0 / 30px 30px 0 0;  /* gentle hump */
+.snow {                                           /* black ground the units stand on (class name kept from the snowy theme) */
+  height: 70px; margin: -14px -16px 0; background: #000;
+  border-top: 3px solid var(--edge); border-radius: 50% 50% 0 0 / 30px 30px 0 0;  /* gentle hump */
 }
 
 .unit {                                           /* outer body of a cabinet / fridge */
-  position: relative; border: 3px solid var(--ink); border-radius: 46px;
+  position: relative; border: 3px solid var(--edge); border-radius: 46px;  /* chalk-white edge */
   background: var(--body); padding: 10px;
-  box-shadow: 7px 8px 0 #9cc6e4;                  /* soft blue shadow on the sky */
+  box-shadow: 7px 8px 0 #000;                     /* black shadow on the night */
 }
 .unit.cold { padding-right: 32px; }               /* room for the door handle */
 .unit.cold::after {                               /* door handle */
   content: ""; position: absolute; right: 9px; top: 52px; width: 13px; height: min(110px, 40%);
-  border: 2.5px solid var(--ink); border-radius: 7px; background: #cfdbe7;
+  border: 2.5px solid var(--ink); border-radius: 7px; background: #bdbdbd;
 }
 .unit.feet::before, .unit.feet .foot2 {           /* little feet under the bottom unit */
   content: ""; position: absolute; bottom: -18px; left: 28px; width: 30px; height: 18px;
-  border: 2.5px solid var(--ink); border-top: none; border-radius: 0 0 10px 10px; background: var(--trim);
+  border: 2.5px solid var(--edge); border-top: none; border-radius: 0 0 10px 10px; background: var(--trim);
 }
 .unit.feet .foot2 { left: auto; right: 34px; }    /* right foot */
 .sign {                                           /* pill sign straddling the top edge */
@@ -121,10 +123,10 @@ button, input, select, textarea { font: inherit; color: inherit; }  /* form cont
 .empty { text-align: center; color: var(--label); font-weight: 600; padding: 24px 0; }  /* '(empty)' */
 
 /* unit colour themes (CSS variables used above) */
-.t-Pantry  { --body: #d98c4a; --trim: #9a5a2a; --inside: #f6d6a3; --shelf: #b8692f; --label: #6b3a14; --shadow: #d9b27c; }
-.t-Freezer { --body: #dff3ff; --trim: #5aa9e6; --inside: #c7e8ff; --shelf: #8fd0ff; --label: #1d5c8f; --shadow: #a6cdea; }
-.t-Fridge  { --body: #ffffff; --trim: #4fb3e8; --inside: #e6f5ff; --shelf: #a8dcff; --label: #1d5c8f; --shadow: #bcd9ee; }
-.t-Counter { --body: #f5e6cf; --trim: #c48a5a; --inside: #fff8ec; --shelf: #e3c9a4; --label: #7a4b25; --shadow: #e5d3b8; }
+.t-Pantry  { --body: #141414; --trim: #3a3a3a; --inside: #d4d4d4; --shelf: #2b2b2b; --label: #0a0a0a; --shadow: #a6a6a6; }
+.t-Freezer { --body: #e0e0e0; --trim: #000000; --inside: #f7f7f7; --shelf: #9e9e9e; --label: #0a0a0a; --shadow: #cfcfcf; }
+.t-Fridge  { --body: #ffffff; --trim: #000000; --inside: #ececec; --shelf: #8a8a8a; --label: #0a0a0a; --shadow: #c4c4c4; }
+.t-Counter { --body: #3d3d3d; --trim: #1a1a1a; --inside: #e6e6e6; --shelf: #6e6e6e; --label: #0a0a0a; --shadow: #bdbdbd; }
 
 /* ---------------------------------------------------------------- tiles */
 .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }  /* as many per row as fit */
@@ -145,6 +147,7 @@ button, input, select, textarea { font: inherit; color: inherit; }  /* form cont
 .bubble {                                         /* light circle behind the emoji */
   display: grid; place-items: center; width: 42px; height: 42px; margin-top: 4px;
   border-radius: 50%; background: #ffffff70; font-size: 25px; line-height: 1;
+  filter: grayscale(1);                           /* black & white emoji */
 }
 .tile .name {                                     /* item name, max 2 lines */
   margin: 4px 0 2px; font-size: 13.5px; font-weight: 600; line-height: 1.15;
@@ -162,7 +165,7 @@ button, input, select, textarea { font: inherit; color: inherit; }  /* form cont
 .fab {
   position: fixed; right: 22px; bottom: calc(22px + var(--safe-b)); z-index: 30;  /* bottom-right corner */
   width: 68px; height: 68px; border-radius: 50%;
-  border: 3px solid var(--ink); background: var(--low); box-shadow: 4px 5px 0 var(--ink);
+  border: 3px solid var(--edge); background: var(--out); color: #fff; box-shadow: 4px 5px 0 #000;  /* red + with a white edge */
   font-size: 46px; font-weight: 600; line-height: 1; padding-bottom: 6px; cursor: pointer;
   transition: transform .15s;
 }
@@ -173,11 +176,11 @@ button, input, select, textarea { font: inherit; color: inherit; }  /* form cont
 .panel { max-width: 720px; margin: 0 auto; }      /* readable width, centred */
 .card {                                           /* white cartoon card */
   background: #fff; border: 3px solid var(--ink); border-radius: 26px;
-  box-shadow: 4px 5px 0 #9cc6e4; padding: 16px 18px; margin-bottom: 16px;
+  box-shadow: 4px 5px 0 #000; padding: 16px 18px; margin-bottom: 16px;
 }
 .card h2 { margin: 0 0 6px; font-size: 22px; }
 .card h3 { margin: 14px 0 6px; font-size: 17px; }
-.muted { color: #5b6b7c; }
+.muted { color: #666; }
 .center { text-align: center; }
 .error { color: #c1121f; min-height: 1.2em; margin: 6px 0; }
 .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
@@ -187,30 +190,30 @@ button, input, select, textarea { font: inherit; color: inherit; }  /* form cont
   font-weight: 600; cursor: pointer; box-shadow: 2px 3px 0 var(--ink);
 }
 .btn:active { transform: translate(2px, 3px); box-shadow: none; }
-.btn.primary { background: var(--low); }
+.btn.primary { background: var(--ink); color: #fff; }  /* black button, white text */
 .btn.danger { background: #ffd6da; }
 .btn.small { padding: 4px 12px; font-size: 14px; }
-.btn.google { width: 100%; background: #e8f0fe; }    /* full-width light-blue Google button */
-.btn.google b { color: #4285f4; font-size: 18px; margin-right: 6px; }  /* blue "G" */
+.btn.google { width: 100%; background: #eeeeee; }    /* full-width grey Google button */
+.btn.google b { color: var(--ink); font-size: 18px; margin-right: 6px; }  /* black "G" */
 .check {                                          /* shopping list row */
-  display: flex; align-items: center; gap: 10px; padding: 7px 4px; border-bottom: 2px dashed #e1e8ef; cursor: pointer;
+  display: flex; align-items: center; gap: 10px; padding: 7px 4px; border-bottom: 2px dashed #e0e0e0; cursor: pointer;
 }
-.check input { width: 22px; height: 22px; accent-color: var(--ok); flex: none; }  /* green tick box */
-.check.done span { text-decoration: line-through; color: #9aa5b1; }  /* ticked = crossed out */
-.check small { color: #5b6b7c; }
+.check input { width: 22px; height: 22px; accent-color: var(--ink); flex: none; }  /* black tick box */
+.check.done span { text-decoration: line-through; color: #9e9e9e; }  /* ticked = crossed out */
+.check small { color: #666; }
 .add-row { display: flex; gap: 8px; margin-top: 12px; }
 .add-row input, .field input, .field select, .field textarea {  /* text boxes */
   flex: 1; width: 100%; padding: 8px 12px; border: 2.5px solid var(--ink); border-radius: 14px; background: #fff;
 }
-.dish { padding: 10px 0; border-bottom: 2px dashed #e1e8ef; }  /* one dish in 'What can I cook?' */
+.dish { padding: 10px 0; border-bottom: 2px dashed #e0e0e0; }  /* one dish in 'What can I cook?' */
 .dish summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; font-weight: 600; }
 .dish summary::-webkit-details-marker { display: none; }  /* hide the default triangle (Safari) */
 .dish .dname { flex: 1; }
-.meter { width: 90px; height: 14px; border: 2px solid var(--ink); border-radius: 999px; background: #eef3f7; overflow: hidden; flex: none; }  /* % bar */
-.meter i { display: block; height: 100%; background: var(--ok); }
+.meter { width: 90px; height: 14px; border: 2px solid var(--ink); border-radius: 999px; background: #eeeeee; overflow: hidden; flex: none; }  /* % bar */
+.meter i { display: block; height: 100%; background: var(--ink); }  /* black fill */
 .pct { width: 44px; text-align: right; font-size: 14px; flex: none; }
 .dish .more { padding: 8px 0 4px; font-size: 15px; }
-.leftover { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 2px dashed #e1e8ef; }
+.leftover { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 2px dashed #e0e0e0; }
 .leftover { flex-wrap: wrap; }                   /* buttons drop below the name on narrow screens */
 .leftover .info { flex: 1 1 180px; }              /* name + age take the room; at least 180px before wrapping */
 .leftover.old .age { color: #c1121f; font-weight: 600; }  /* old = red */
@@ -222,15 +225,15 @@ select.filter { padding: 6px 12px; border: 2.5px solid var(--ink); border-radius
   border: 3px solid var(--ink); border-radius: 30px; padding: 20px;
   box-shadow: 6px 8px 0 var(--ink); background: #fff;
 }
-.sheet::backdrop { background: #1f2d3d66; backdrop-filter: blur(2px); }  /* dim the page behind */
+.sheet::backdrop { background: #00000099; backdrop-filter: blur(2px); }  /* dim the page behind */
 .sheet.small { width: min(380px, calc(100vw - 24px)); }
 .sheet h2 { margin: 0 0 4px; }
 .sheet-head { display: flex; align-items: center; gap: 12px; }
-.sheet-head .big { font-size: 46px; }             /* big emoji */
+.sheet-head .big { font-size: 46px; filter: grayscale(1); }  /* big emoji, black & white */
 .sheet-head h2 { flex: 1; font-size: 24px; line-height: 1.15; }
 .close { border: none; background: none; font-size: 28px; cursor: pointer; border-radius: 50%; width: 44px; height: 44px; }  /* ✕ button */
 .close:focus { outline: none; }                   /* no square focus box when the pop-up opens */
-.close:focus-visible { background: #fff3c4; }     /* keyboard users still see where they are (yellow circle) */
+.close:focus-visible { background: #e6e6e6; }     /* keyboard users still see where they are (grey circle) */
 .stepper { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 16px 0; }  /* − qty + */
 .stepper button {
   width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--ink); background: #fff;
@@ -252,9 +255,9 @@ select.filter { padding: 6px 12px; border: 2.5px solid var(--ink); border-radius
 
 /* ---------------------------------------------------------------- spiral notebook (tabs + pages) */
 :root {
-  --paper: #fffdf2;                               /* notebook-paper cream */
+  --paper: #f4f4f4;                               /* plain white-grey notebook paper */
   --comic: "Comic Neue", "Comic Sans MS", "Chalkboard SE", cursive;  /* comic font (Chalkboard = iPhone's comic-ish font) */
-  --coil: #8a96a3;                                /* metal spiral colour */
+  --coil: #9e9e9e;                                /* metal spiral colour */
 }
 .tabs {                                           /* the notebook's top: paper strip with a spiral binding */
   max-width: 720px; margin: 8px auto 0; padding: 30px 14px 0; gap: 6px; justify-content: stretch;
@@ -277,19 +280,20 @@ select.filter { padding: 6px 12px; border: 2.5px solid var(--ink); border-radius
   border-radius: 16px 16px 0 0; border-bottom: none; box-shadow: none;
   background: color-mix(in srgb, var(--tab) 45%, white);  /* paler when not selected */
   padding: 8px 8px 6px; margin-top: 6px;
+  filter: grayscale(1);                           /* black & white tab emoji */
 }
 .tabs button.active { background: var(--tab); margin-top: 0; padding-bottom: 12px; }  /* selected tab sticks up higher */
 .tabs button:active { transform: none; }
-.tabs [data-view="shelves"]   { --tab: #ffd166; }  /* tab colours, same as the desktop app */
-.tabs [data-view="shopping"]  { --tab: #7ed957; }
-.tabs [data-view="cook"]      { --tab: #ffa36c; }
-.tabs [data-view="leftovers"] { --tab: #8ec5ff; }
+.tabs [data-view="shelves"]   { --tab: #d9d9d9; }  /* tab greys, light to dark, same as the desktop app */
+.tabs [data-view="shopping"]  { --tab: #bfbfbf; }
+.tabs [data-view="cook"]      { --tab: #a6a6a6; }
+.tabs [data-view="leftovers"] { --tab: #8c8c8c; }
 
 .panel .card {                                    /* pages = lined notebook paper with a red margin */
   font-family: var(--comic); font-size: 17px; border-radius: 0 0 26px 26px; margin-top: 0;
   background:
-    linear-gradient(90deg, transparent 30px, #ff9aa2 30px 32px, transparent 32px),  /* red margin line */
-    repeating-linear-gradient(var(--paper) 0 29px, #bfe0f5 29px 30px);             /* blue ruled lines */
+    linear-gradient(90deg, transparent 30px, var(--out) 30px 32px, transparent 32px),  /* red margin line */
+    repeating-linear-gradient(var(--paper) 0 29px, #d0d0d0 29px 30px);                /* grey ruled lines */
   padding-left: 46px;                             /* write to the right of the margin */
 }
 .panel .card h2, .panel .card h3 { font-family: var(--comic); font-weight: 700; }

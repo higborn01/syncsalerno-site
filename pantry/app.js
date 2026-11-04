@@ -1,14 +1,14 @@
 // app.js - the screens: shelves, item editor, shopping list, what can I cook?, leftovers, menu, sign-in.
-// ?v=5 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
-import { firebaseConfig } from "./firebase-config.js?v=5";             // your Firebase settings (or null)
-import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=5"; // where data is kept
-import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=5";
+// ?v=6 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
+import { firebaseConfig } from "./firebase-config.js?v=6";             // your Firebase settings (or null)
+import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=6"; // where data is kept
+import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=6";
 
 const $ = (sel) => document.querySelector(sel);   // shortcut: find one element by CSS selector
 
-const CAT_COLORS = { "Produce": "#7ed957", "Dairy & Eggs": "#fff1a8", "Frozen": "#9be7ff", "Canned & Dry": "#ffa36c",  // tile colours
-  "Grains & Pasta": "#ffd166", "Baking": "#ffc2e2", "Spices": "#ff7f5c", "Sauces & Condiments": "#ff6b81",
-  "Bread & Tortillas": "#e9c46a", "Snacks": "#c99bff", "Leftovers": "#8ec5ff", "Other": "#cfd8dc" };
+const CAT_COLORS = { "Produce": "#ffffff", "Dairy & Eggs": "#d6d6d6", "Frozen": "#f0f0f0", "Canned & Dry": "#bdbdbd",  // tile greys (light/dark alternate), same as desktop
+  "Grains & Pasta": "#e6e6e6", "Baking": "#c8c8c8", "Spices": "#f7f7f7", "Sauces & Condiments": "#b0b0b0",
+  "Bread & Tortillas": "#dedede", "Snacks": "#a8a8a8", "Leftovers": "#ebebeb", "Other": "#cccccc" };
 const COLUMNS = [["Counter", "Pantry"], ["Freezer", "Fridge"]];  // left column, right column (top to bottom)
 
 let store = null;                                 // the active data store
@@ -221,7 +221,7 @@ function renderCook() {
     ${data.dishes.length ? `<p class="muted">Dishes ranked by how much you already have. Tap one for details.</p>` :
       `<p class="muted">No dishes yet. Import them from the desktop app (⋯ menu → Import).</p>`}
     ${ranked.map((r) => `<details class="dish"><summary><span class="dname">${esc(r.dish.name)}</span>
-        <span class="meter"><i style="width:${r.pct}%;background:${r.pct === 100 ? "var(--ok)" : r.pct >= 70 ? "var(--low)" : "var(--out)"}"></i></span>
+        <span class="meter"><i style="width:${r.pct}%;background:${r.pct === 100 ? "var(--ink)" : r.pct >= 70 ? "#8c8c8c" : "var(--out)"}"></i></span>
         <span class="pct">${r.pct}%</span></summary>
       <div class="more"><p><b>Needs:</b> ${esc(r.dish.shopping_list)}</p>
         ${r.missing.length ? `<p><b>Missing:</b> ${esc(r.missing.join(", "))}</p>
