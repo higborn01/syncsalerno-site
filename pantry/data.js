@@ -75,9 +75,23 @@ export class FirebaseStore {
   set(key, value) { this.state = { ...this.state, [key]: value }; this.listeners.forEach((fn) => fn(this.state)); }  // update + notify
   subscribe(fn) { this.listeners.push(fn); fn(this.state); }
   stop() { this.unsubs.forEach((u) => u()); }         // stop listening (on sign-out)
-  async addItem(fields) { const ref = await this.fs.addDoc(this.items, fields); return ref.id; }  // addDoc = new document, random id
-  async updateItem(id, fields) { await this.fs.updateDoc(this.fs.doc(this.items, id), fields); }
-  async deleteItem(id) { await this.fs.deleteDoc(this.fs.doc(this.items, id)); }
+  stamp(batch) {                                      // also change the version stamp, so the desktop app knows to download changes
+    batch.set(this.fs.doc(fb.db, this.base, "meta", "version"), { stamp: newId(), by: "web", at: this.fs.serverTimestamp() });
+  }
+  async addItem(fields) {                             // new item + new stamp, saved together
+    const ref = this.fs.doc(this.items);              // fs.doc(collection) = new document with a random id
+    const batch = this.fs.writeBatch(fb.db);          // batch = several writes saved together
+    batch.set(ref, fields); this.stamp(batch); await batch.commit();
+    return ref.id;
+  }
+  async updateItem(id, fields) {                      // change an item + new stamp
+    const batch = this.fs.writeBatch(fb.db);
+    batch.update(this.fs.doc(this.items, id), fields); this.stamp(batch); await batch.commit();
+  }
+  async deleteItem(id) {                              // delete an item + new stamp
+    const batch = this.fs.writeBatch(fb.db);
+    batch.delete(this.fs.doc(this.items, id)); this.stamp(batch); await batch.commit();
+  }
   async addExtra(name) {
     if (this.state.extras.some((e) => e.name.toLowerCase() === name.toLowerCase())) return;  // already listed
     await this.fs.addDoc(this.extras, { name, added: new Date().toISOString() });
@@ -93,6 +107,7 @@ export class FirebaseStore {
     for (let i = 0; i < writes.length; i += 400) {    // a batch can hold at most 500 writes, so do 400 at a time
       const batch = fs.writeBatch(fb.db);             // batch = several writes saved together
       writes.slice(i, i + 400).forEach(([ref, value]) => batch.set(ref, value));
+      if (i + 400 >= writes.length) this.stamp(batch);  // last batch also changes the version stamp
       await batch.commit();                           // send them
     }
   }
