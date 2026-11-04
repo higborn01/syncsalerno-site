@@ -7,6 +7,7 @@
 <title>Virtual Pantry</title>                                              <!-- browser tab title -->
 <meta name="theme-color" content="#9fd8ff">                                <!-- colours the phone's status bar -->
 <meta name="apple-mobile-web-app-capable" content="yes">                   <!-- iPhone: open full-screen from the home screen -->
+<meta name="mobile-web-app-capable" content="yes">                         <!-- same, for Android / Chrome (the newer tag name) -->
 <meta name="apple-mobile-web-app-title" content="Pantry">                   <!-- name under the home-screen icon -->
 <meta name="apple-mobile-web-app-status-bar-style" content="default">      <!-- normal (dark text) status bar -->
 <link rel="apple-touch-icon" href="icon-180.png">                          <!-- the cartoon fridge on the iPhone home screen -->
@@ -62,6 +63,8 @@
   <form id="login-form" method="dialog">
     <h2>🧊 Virtual Pantry</h2>
     <p class="muted">Sign in to sync between your phone and laptop.</p>
+    <div class="row"><button class="btn google" type="button" id="google-btn"><b>G</b> Sign in with Google</button></div>  <!-- Google account sign-in -->
+    <p class="muted center">or with email</p>
     <label>Email <input name="email" type="email" autocomplete="username" required></label>
     <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
     <p id="login-error" class="error"></p>

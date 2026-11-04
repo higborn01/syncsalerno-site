@@ -49,7 +49,9 @@ export async function loadFirebase(config) {          // load the Firebase libra
   const app = initializeApp(config);                  // connect to your Firebase project
   const db = fs.initializeFirestore(app, {            // the database, with an offline copy kept on the device
     localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }) });  // works offline, syncs when back online
-  fb = { auth: auth.getAuth(app), authFns: auth, db, fs };  // keep everything we need
+  const signIn = auth.initializeAuth(app, {           // sign-in, set up lightly: just "remember who's signed in" on this device
+    persistence: [auth.indexedDBLocalPersistence, auth.browserLocalPersistence] });  // (Google pop-up code loads only when used)
+  fb = { auth: signIn, authFns: auth, db, fs };       // keep everything we need
   return fb;
 }
 

@@ -21,6 +21,15 @@ let authUser = null;                              // signed-in Firebase user (or
 // escape text before putting it inside HTML, so a name like "<b>" shows as text, not as code
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
+function signInMessage(err, fallback) {          // friendly text for a Firebase sign-in error
+  console.error(err);                             // full details in the browser console, for debugging
+  if (err.code === "auth/operation-not-allowed") return "That sign-in method isn't turned on in Firebase yet.";
+  if (err.code === "auth/unauthorized-domain") return "Add this site's address under Authentication → Settings → Authorized domains.";
+  if (err.code === "auth/popup-blocked") return "The pop-up was blocked - allow pop-ups for this site and try again.";
+  if (err.code === "auth/network-request-failed") return "No internet connection - try again when you're online.";
+  return fallback;                                // anything else
+}
+
 function toast(msg) {                             // show a little message for 2.5 seconds
   const t = $("#toast"); t.textContent = msg; t.classList.add("show");
   clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 2500);
@@ -364,7 +373,20 @@ function wireUpEvents() {
     try {
       const fb = await loadFirebase(firebaseConfig);
       await fb.authFns.signInWithEmailAndPassword(fb.auth, f.get("email"), f.get("password"));
-    } catch (err) { $("#login-error").textContent = "Couldn't sign in - check your email and password."; }
+    } catch (err) { $("#login-error").textContent = signInMessage(err, "Couldn't sign in - check your email and password."); }
+  });
+  $("#google-btn").addEventListener("click", async () => {      // Google sign-in (opens Google's pop-up window)
+    $("#login-error").textContent = "";                         // clear any old message
+    try {
+      const fb = await loadFirebase(firebaseConfig);
+      await fb.authFns.signInWithPopup(fb.auth, new fb.authFns.GoogleAuthProvider(),  // pop-up -> pick your Google account
+        fb.authFns.browserPopupRedirectResolver);       // the pop-up helper (loaded only now, not at start-up)
+    } catch (err) {
+      if (err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request") return;  // you closed it: no message
+      $("#login-error").textContent = signInMessage(err,
+        navigator.standalone ? "Google sign-in didn't finish. On iPhone, open the site in Safari (not the home-screen icon) or use email."
+                             : "Google sign-in didn't work - try again, or use email.");  // navigator.standalone = running from the iPhone home screen
+    }
   });
   $("#local-btn").addEventListener("click", () => {             // skip sign-in
     localStorage.setItem("pantry-mode", "local"); $("#login").close();
