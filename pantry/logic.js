@@ -45,6 +45,7 @@ const KEYWORDS = [
   ["sun-dried", "🍅"], ["canned", "🥫"], ["cake mix", "🎂"], ["pie crust", "🥧"], ["garam masala", "🍛"],
   ["curry", "🍛"], ["italian seasoning", "🌿"], ["chick'n", "🌱"], ["beyond steak", "🌱"], ["stir-fry", "🥢"],
   ["fruit pearl", "🍡"], ["bouillon", "🍲"], ["instant noodle", "🍜"],
+  ["tortilla chip", "🌮"], ["coconut", "🥥"], ["banana", "🍌"], ["dumpling", "🥟"], ["oat", "🌾"], ["yogurt", "🥣"],
   ["extract", "🧪"], ["vanilla", "🧪"], ["yeast", "🍞"], ["flour", "🌾"], ["sugar", "🍬"], ["sprinkle", "🧁"],
   ["cornstarch", "🌽"],
   ["cheese", "🧀"], ["colby", "🧀"], ["mozzarella", "🧀"], ["parmesan", "🧀"], ["cotija", "🧀"], ["milk", "🥛"],
@@ -68,7 +69,8 @@ const CATEGORY_EMOJI = { "Produce": "🥬", "Dairy & Eggs": "🥛", "Frozen": "�
 
 export function emojiFor(item) {                       // best emoji for an item
   const name = item.name.toLowerCase();                // compare in lower case
-  for (const [word, emoji] of KEYWORDS) if (name.includes(word)) return emoji;  // first keyword found in the name
+  for (const [word, emoji] of KEYWORDS)               // first keyword found at the START of a word
+    if (new RegExp("\\b" + word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).test(name)) return emoji;  // \b = word edge ('egg' not in 'veggie'); the replace escapes symbols
   if (["can", "cans"].includes((item.unit || "").toLowerCase())) return "🥫";   // sold in cans
   return CATEGORY_EMOJI[item.category] || "📦";        // category fallback
 }

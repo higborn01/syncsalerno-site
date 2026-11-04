@@ -273,7 +273,7 @@ function wireUpEvents() {
     view = b.dataset.view;
     document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("active", x === b));
     document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.id === "view-" + view));
-    $("#fab").style.display = view === "shelves" || view === "shopping" ? "" : "none";  // + only where it makes sense
+    $("#fab").style.display = view === "shelves" ? "" : "none";  // + only on the shelves (other tabs have their own add buttons)
     render(); window.scrollTo(0, 0);
   }));
   $("#search").addEventListener("input", () => { if (view !== "shelves") $(".tabs button").click(); else renderShelves(); });  // typing jumps to shelves
