@@ -1,7 +1,8 @@
 // app.js - the screens: shelves, item editor, shopping list, what can I cook?, leftovers, menu, sign-in.
-import { firebaseConfig } from "./firebase-config.js";             // your Firebase settings (or null)
-import { LocalStore, FirebaseStore, loadFirebase } from "./data.js"; // where data is kept
-import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js";
+// ?v=4 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
+import { firebaseConfig } from "./firebase-config.js?v=4";             // your Firebase settings (or null)
+import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=4"; // where data is kept
+import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=4";
 
 const $ = (sel) => document.querySelector(sel);   // shortcut: find one element by CSS selector
 
@@ -60,6 +61,7 @@ function useStore(s) {                            // switch to a store and redra
 
 // ================================================================ drawing
 function render() {                               // redraw the counts + the visible tab
+  $("#signin-pill").hidden = !(firebaseConfig && !authUser);  // show 'Sign in' only when sync is possible but you're signed out
   const statuses = data.items.map(statusOf);
   $("#counts").textContent = `${data.items.length} items · ${statuses.filter((s) => s === "Low").length} low · ${statuses.filter((s) => s === "Out").length} out`;
   ({ shelves: renderShelves, shopping: renderShopping, cook: renderCook, leftovers: renderLeftovers })[view]();  // call the right one
@@ -288,6 +290,11 @@ function wireUpEvents() {
   $("#search").addEventListener("input", () => { if (view !== "shelves") $(".tabs button").click(); else renderShelves(); });  // typing jumps to shelves
   $("#fab").addEventListener("click", () => openSheet(null));    // + : add something
   $("#menu-btn").addEventListener("click", openMenu);
+  $("#signin-pill").addEventListener("click", () => {          // top-bar 'Sign in' button
+    localStorage.removeItem("pantry-mode");                     // forget an earlier 'this device only' choice
+    $("#login-error").textContent = "";                         // clear old messages
+    $("#login").showModal();                                    // open the sign-in card
+  });
 
   $("#unit-chips").addEventListener("click", (e) => {           // unit filter chips
     const u = e.target.closest("[data-unit]"); if (u) { unitFilter = u.dataset.unit; renderShelves(); }
