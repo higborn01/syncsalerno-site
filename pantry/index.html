@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">                                                     <!-- text encoding (emoji need UTF-8) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">  <!-- fit phone screens, incl. the notch -->
+<meta name="robots" content="noindex">                                     <!-- unlisted: ask search engines not to list it -->
+<title>Virtual Pantry</title>                                              <!-- browser tab title -->
+<meta name="theme-color" content="#9fd8ff">                                <!-- colours the phone's status bar -->
+<meta name="apple-mobile-web-app-capable" content="yes">                   <!-- iPhone: open full-screen from the home screen -->
+<meta name="apple-mobile-web-app-title" content="Pantry">                   <!-- name under the home-screen icon -->
+<meta name="apple-mobile-web-app-status-bar-style" content="default">      <!-- normal (dark text) status bar -->
+<link rel="apple-touch-icon" href="icon-180.png">                          <!-- the cartoon fridge on the iPhone home screen -->
+<link rel="icon" type="image/png" href="favicon.png">                      <!-- fridge in the browser tab -->
+<link rel="manifest" href="manifest.webmanifest">                          <!-- web-app settings (name, icons, colours) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">                <!-- start connecting to Google Fonts early -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">  <!-- bubbly cartoon font -->
+<link rel="stylesheet" href="style.css">                                   <!-- our styles -->
+</head>
+<body>
+
+<!-- Top bar: logo, search, counts, menu -->
+<header class="topbar">
+  <div class="brand"><img src="favicon.png" alt=""><span>Pantry</span></div>  <!-- fridge logo + name -->
+  <input id="search" type="search" placeholder="Search…" autocomplete="off">  <!-- fades tiles that don't match -->
+  <span id="counts" class="counts"></span>                                     <!-- '144 items · 2 low · 15 out' -->
+  <button id="menu-btn" class="icon-btn" aria-label="Menu">⋯</button>          <!-- opens the menu -->
+</header>
+
+<!-- Tabs -->
+<nav class="tabs">
+  <button data-view="shelves" class="active">🧊<span>Shelves</span></button>
+  <button data-view="shopping">🛒<span>Shopping</span></button>
+  <button data-view="cook">🍳<span>Cook</span></button>
+  <button data-view="leftovers">🍱<span>Leftovers</span></button>
+</nav>
+
+<main>
+  <section id="view-shelves" class="view active">                <!-- the illustrated shelves -->
+    <div id="unit-chips" class="chips"></div>                    <!-- All / Pantry / Fridge / ... filter -->
+    <div id="scene" class="scene"></div>                         <!-- units drawn here -->
+    <div class="snow"></div>                                     <!-- snowy floor -->
+  </section>
+  <section id="view-shopping" class="view panel"></section>      <!-- shopping list -->
+  <section id="view-cook" class="view panel"></section>          <!-- what can I cook? -->
+  <section id="view-leftovers" class="view panel"></section>     <!-- leftovers -->
+</main>
+
+<button id="fab" class="fab" aria-label="Add to pantry">+</button>  <!-- big round + : add something -->
+
+<!-- Item editor (opens over everything) -->
+<dialog id="sheet" class="sheet"><form id="item-form" method="dialog"></form></dialog>
+
+<!-- Menu -->
+<dialog id="menu" class="sheet small">
+  <div id="menu-body"></div>
+  <input id="import-file" type="file" accept=".json,application/json" hidden>  <!-- hidden file picker for Import -->
+</dialog>
+
+<!-- Sign-in -->
+<dialog id="login" class="sheet small">
+  <form id="login-form" method="dialog">
+    <h2>🧊 Virtual Pantry</h2>
+    <p class="muted">Sign in to sync between your phone and laptop.</p>
+    <label>Email <input name="email" type="email" autocomplete="username" required></label>
+    <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+    <p id="login-error" class="error"></p>
+    <div class="row"><button class="btn primary" value="signin">Sign in</button></div>
+    <p class="muted center">or</p>
+    <div class="row"><button class="btn" type="button" id="local-btn">Use on this device only</button></div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>   <!-- small pop-up messages -->
+
+<script type="module" src="app.js"></script>  <!-- the app (type=module lets files import each other) -->
+</body>
+</html>
