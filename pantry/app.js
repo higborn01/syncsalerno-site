@@ -1,8 +1,8 @@
 // app.js - the screens: shelves, item editor, shopping list, what can I cook?, leftovers, menu, sign-in.
-// ?v=6 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
-import { firebaseConfig } from "./firebase-config.js?v=6";             // your Firebase settings (or null)
-import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=6"; // where data is kept
-import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=6";
+// ?v=8 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
+import { firebaseConfig } from "./firebase-config.js?v=8";             // your Firebase settings (or null)
+import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=8"; // where data is kept
+import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=8";
 
 const $ = (sel) => document.querySelector(sel);   // shortcut: find one element by CSS selector
 
@@ -12,7 +12,8 @@ const CAT_COLORS = { "Produce": "#ffffff", "Dairy & Eggs": "#d6d6d6", "Frozen": 
 const COLUMNS = [["Counter", "Pantry"], ["Freezer", "Fridge"]];  // left column, right column (top to bottom)
 
 let store = null;                                 // the active data store
-let data = { items: [], extras: [], dishes: [] }; // latest data from the store
+let data = { items: [], extras: [], dishes: [], projects: [] };  // latest data from the store
+let editingProject = null;                        // id of the project open in its editor (null = adding a new one)
 let view = "shelves";                             // which tab is showing
 let unitFilter = "All";                           // which unit(s) the shelves show
 let editingId = null;                             // id of the item open in the editor (null = adding a new one)
@@ -64,7 +65,7 @@ function render() {                               // redraw the counts + the vis
   $("#signin-pill").hidden = !(firebaseConfig && !authUser);  // show 'Sign in' only when sync is possible but you're signed out
   const statuses = data.items.map(statusOf);
   $("#counts").textContent = `${data.items.length} items · ${statuses.filter((s) => s === "Low").length} low · ${statuses.filter((s) => s === "Out").length} out`;
-  ({ shelves: renderShelves, shopping: renderShopping, cook: renderCook, leftovers: renderLeftovers })[view]();  // call the right one
+  ({ shelves: renderShelves, shopping: renderShopping, cook: renderCook, leftovers: renderLeftovers, projects: renderProjects })[view]();  // call the right one
   if ($("#sheet").open && editingId) fillSheet(data.items.find((i) => i.id === editingId));  // keep an open editor up to date
 }
 
@@ -78,7 +79,7 @@ function tileHTML(item, query) {                  // one item tile
   </button>`;
 }
 
-function unitHTML(loc, items, query, last) {      // one unit (cabinet / fridge...) with its shelves
+function unitHTML(loc, items, query, last, first) {  // one unit (cabinet / fridge...) with its shelves; first = top of its column
   const byCat = {};                               // category -> items
   for (const item of [...items].sort((a, b) => a.name.localeCompare(b.name))) (byCat[item.category] ||= []).push(item);  // ||= : create list if missing
   const order = (c) => (CATEGORIES.includes(c) ? CATEGORIES.indexOf(c) : 99);       // shelf order
@@ -87,7 +88,9 @@ function unitHTML(loc, items, query, last) {      // one unit (cabinet / fridge.
        <div class="tiles">${byCat[cat].map((i) => tileHTML(i, query)).join("")}</div><div class="board"></div></div>`).join("");
   const cold = loc === "Fridge" || loc === "Freezer";
   return `<section class="unit t-${loc}${cold ? " cold" : ""}${last ? " feet" : ""}">
-    <div class="sign">${loc.toUpperCase()}</div>
+    ${first ? '<div class="candles"><i></i><i></i><i></i></div>' : ""}
+    <span class="web"></span>
+    <div class="sign">${loc}</div>
     <div class="wall">${shelves || `<div class="empty">(empty)</div><div class="board"></div>`}</div>
     ${last ? '<span class="foot2"></span>' : ""}
   </section>`;
@@ -104,7 +107,7 @@ function renderShelves() {
   if (unitFilter !== "All") columns = [[unitFilter]];          // just one unit
   $("#scene").className = "scene" + (columns.length === 1 ? " single" : "");
   $("#scene").innerHTML = columns.map((col) => `<div class="column">${
-    col.map((loc, n) => unitHTML(loc, byLoc[loc] || [], query, n === col.length - 1)).join("")}</div>`).join("");
+    col.map((loc, n) => unitHTML(loc, byLoc[loc] || [], query, n === col.length - 1, n === 0)).join("")}</div>`).join("");
   if (!data.items.length) $("#scene").insertAdjacentHTML("afterbegin",   // brand-new, empty pantry
     `<div class="card center" style="grid-column:1/-1">Your pantry is empty - tap the big <b>+</b> to add something!</div>`);
 }
@@ -247,6 +250,49 @@ function renderLeftovers() {
     }).join("")}</div>`;
 }
 
+// ================================================================ ongoing projects
+function renderProjects() {
+  const list = [...(data.projects || [])].sort((a, b) =>          // oldest first, unknown dates last
+    (a.started || "9999").localeCompare(b.started || "9999") || a.name.localeCompare(b.name));
+  $("#view-projects").innerHTML = `<div class="card">
+    <div class="row"><h2 style="flex:1">⚗️ Ongoing projects</h2><button class="btn small primary" data-act="add-project">+ Add project</button></div>
+    <p class="muted">Things brewing, steeping or in progress. Tap one to edit it.</p>
+    ${list.length ? "" : `<p>Nothing brewing right now.</p>`}
+    ${list.map((p) => {
+      const days = p.started ? daysSince(p.started) : null;
+      const since = days === null ? "start date unknown" : `started ${p.started} - ${days} day${days === 1 ? "" : "s"}`;
+      return `<div class="leftover project" data-edit="${esc(p.id)}">
+        <div class="info"><b>${esc(p.name)}</b><div class="age muted">${esc(since)}</div>
+          ${p.notes ? `<div class="notes">${esc(p.notes)}</div>` : ""}</div>
+        <div class="row"><button class="btn small" data-started="${esc(p.id)}">Started today</button>
+        <button class="btn small danger" data-done="${esc(p.id)}">Finished</button></div></div>`;
+    }).join("")}</div>`;
+}
+
+function openProject(id) {                        // id = existing project, null = add new
+  editingProject = id;
+  const p = (id && data.projects.find((x) => x.id === id)) || { name: "", started: today(), notes: "" };  // new ones start today
+  $("#project-form").innerHTML = `
+    <div class="sheet-head"><span class="big">⚗️</span><h2>${id ? esc(p.name) : "Add project"}</h2>
+      <button type="button" class="close" data-act="close">✕</button></div>
+    <div class="field"><span>Project</span><input name="name" value="${esc(p.name)}" required ${id ? "" : "autofocus"}></div>
+    <div class="field"><span>Started</span><input name="started" type="date" value="${esc(p.started || "")}"></div>
+    <div class="field"><span>Notes</span><textarea name="notes" rows="4">${esc(p.notes)}</textarea></div>
+    <p class="error" id="project-error"></p>
+    <div class="row"><button class="btn primary" type="submit">${id ? "Save" : "Add it"}</button></div>`;
+  $("#project-sheet").showModal();
+}
+
+async function saveProject() {                   // 'Save' / 'Add it'
+  const f = Object.fromEntries(new FormData($("#project-form")));
+  const name = f.name.trim();
+  if (!name) { $("#project-error").textContent = "Please give it a name."; return; }
+  const fields = { name, started: f.started || null, notes: f.notes.trim() };  // blank date = unknown
+  if (editingProject) await store.updateProject(editingProject, fields);
+  else { await store.addProject(fields); toast(`Added ${name}!`); }
+  $("#project-sheet").close();
+}
+
 // ================================================================ menu
 function openMenu() {
   const signedIn = !!authUser;
@@ -271,7 +317,7 @@ async function importFile(file) {                 // read the desktop app's pant
 }
 
 function downloadBackup() {                       // save everything as a .json file
-  const blob = new Blob([JSON.stringify({ version: 1, items: data.items, extras: data.extras.map((e) => e.name), dishes: data.dishes }, null, 1)],
+  const blob = new Blob([JSON.stringify({ version: 1, items: data.items, extras: data.extras.map((e) => e.name), dishes: data.dishes, projects: data.projects || [] }, null, 1)],
     { type: "application/json" });                // Blob = a file made in memory
   const a = document.createElement("a");          // temporary download link
   a.href = URL.createObjectURL(blob); a.download = `pantry-backup-${today()}.json`; a.click();
@@ -363,6 +409,23 @@ function wireUpEvents() {
       await store.addItem({ name: n, category: "Leftovers", qty: 1, unit: "container", min_qty: 0, location: "Fridge", notes: "", updated: today() });
     }
   });
+
+  $("#view-projects").addEventListener("click", async (e) => {  // ongoing projects
+    const started = e.target.closest("[data-started]")?.dataset.started;
+    const done = e.target.closest("[data-done]")?.dataset.done;
+    if (started) return store.updateProject(started, { started: today() });  // day count back to 0
+    if (done) {
+      const p = data.projects.find((x) => x.id === done);
+      if (p && confirm(`Done with "${p.name}"? Remove it from the list?`)) await store.deleteProject(done);
+      return;
+    }
+    if (e.target.closest("[data-act]")?.dataset.act === "add-project") return openProject(null);
+    const edit = e.target.closest("[data-edit]")?.dataset.edit;  // tapped the project itself
+    if (edit) openProject(edit);
+  });
+  $("#project-form").addEventListener("submit", (e) => { e.preventDefault(); saveProject(); });
+  $("#project-form").addEventListener("click", (e) => { if (e.target.closest("[data-act]")?.dataset.act === "close") $("#project-sheet").close(); });
+  $("#project-sheet").addEventListener("close", () => { editingProject = null; });
 
   $("#menu").addEventListener("click", async (e) => {           // menu buttons
     const act = e.target.closest("[data-act]")?.dataset.act; if (!act) return;

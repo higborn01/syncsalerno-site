@@ -1,5 +1,6 @@
-/* style.css - emo cartoon look: thick ink outlines, black / white / grey with a red accent,
-   big round corners, chunky "hard" drop shadows, charcoal night + falling ash. */
+/* style.css - emo witchcraft look (Salem at night, not Halloween): thick ink outlines,
+   black / white / grey with a red accent, big round corners, chunky "hard" drop shadows,
+   starry night with a crescent moon and fog, candles, cobwebs, tarot-card tiles, a grimoire. */
 
 :root {
   --ink: #0a0a0a;                 /* the thick ink-black outline colour */
@@ -10,7 +11,8 @@
   --low: #ff9e9e;
   --out: #e01b24;                 /* also the one accent colour */
   --unknown: #8c8c8c;
-  --font: "Fredoka", "Segoe UI", system-ui, sans-serif;  /* bubbly font, with fallbacks */
+  --font: "IM Fell English", "Palatino Linotype", Palatino, Georgia, serif;  /* old-book font, with fallbacks */
+  --gothic: "UnifrakturMaguntia", "Old English Text MT", serif;             /* blackletter 'witch book' font for signs + title */
   --safe-b: env(safe-area-inset-bottom, 0px);            /* space for the iPhone home bar */
 }
 
@@ -18,14 +20,21 @@
 
 html, body { margin: 0; }          /* no default gap around the page */
 body {
-  font-family: var(--font);        /* cartoon font everywhere */
+  font-family: var(--font);        /* old-book font everywhere */
   color: var(--ink);               /* dark text */
-  background:                      /* night: scattered grey ash on top of a black fade */
-    radial-gradient(circle at 20% 30%, #8c8c8c 0 2px, transparent 3px) 0 0 / 140px 120px,
-    radial-gradient(circle at 70% 60%, #8c8c8c 0 1.5px, transparent 2.5px) 0 0 / 110px 95px,
+  background:                      /* night: three sizes of stars on top of a black fade */
+    radial-gradient(circle at 20% 30%, #d0d0d0 0 1px, transparent 1.6px) 0 0 / 140px 120px,
+    radial-gradient(circle at 70% 60%, #8c8c8c 0 0.8px, transparent 1.4px) 0 0 / 90px 85px,
+    radial-gradient(circle at 45% 80%, #e6e6e6 0 1.4px, transparent 2px) 0 0 / 230px 210px,
     linear-gradient(var(--sky-top), var(--sky-bottom) 70%) fixed;
   min-height: 100vh;               /* fill the screen */
   -webkit-tap-highlight-color: transparent;  /* no grey flash when tapping on iPhone */
+}
+body::before {                     /* crescent moon, fixed in the top-right corner of the sky */
+  content: ""; position: fixed; z-index: -1; top: 76px; right: 34px; width: 46px; height: 46px;
+  border-radius: 50%; box-shadow: -11px 5px 0 0 #f2f2f2;          /* a circle's offset shadow = crescent */
+  filter: drop-shadow(0 0 14px #ffffff55);                         /* soft glow */
+  pointer-events: none;
 }
 button, input, select, textarea { font: inherit; color: inherit; }  /* form controls use the cartoon font too */
 input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2.5px solid var(--out); outline-offset: 1px; }  /* red ring on the box you're typing in */
@@ -40,6 +49,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2.5
 }
 .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 24px; }  /* logo + name */
 .brand img { width: 34px; height: 34px; filter: grayscale(1); }  /* fridge logo size, in black & white */
+.brand span { font-family: var(--gothic); font-weight: 400; font-size: 30px; }  /* blackletter name */
+.brand span::before { content: "☾ "; font-family: var(--font); }  /* crescent moon before the name */
 #search {                                         /* search box */
   flex: 1; min-width: 0; max-width: 340px;        /* stretches, but not too wide */
   padding: 8px 14px; border: 2.5px solid var(--ink); border-radius: 999px;  /* pill shape */
@@ -85,7 +96,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2.5
 .column { display: flex; flex-direction: column; gap: 34px; }  /* units stacked (counter on pantry, freezer on fridge) */
 .snow {                                           /* black ground the units stand on (class name kept from the snowy theme) */
   height: 70px; margin: -14px -16px 0; background: #000;
-  border-top: 3px solid var(--edge); border-radius: 50% 50% 0 0 / 30px 30px 0 0;  /* gentle hump */
+  border-top: 2px solid #8c8c8c; border-radius: 50% 50% 0 0 / 30px 30px 0 0;  /* gentle hump */
+  box-shadow: 0 -26px 40px 12px #3a3a3a;          /* low fog rolling above the ground */
 }
 
 .unit {                                           /* outer body of a cabinet / fridge */
@@ -106,7 +118,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2.5
 .sign {                                           /* pill sign straddling the top edge */
   position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
   padding: 2px 22px; border: 3px solid var(--ink); border-radius: 999px; background: var(--trim);
-  color: #fff; font-weight: 700; font-size: 20px; letter-spacing: 1px; white-space: nowrap;
+  color: #fff; font-family: var(--gothic); font-weight: 400; font-size: 25px; white-space: nowrap;  /* blackletter sign */
   text-shadow: -2px 0 var(--ink), 2px 0 var(--ink), 0 -2px var(--ink), 0 2px var(--ink),  /* dark outline around white text */
                -1.5px -1.5px var(--ink), 1.5px 1.5px var(--ink), -1.5px 1.5px var(--ink), 1.5px -1.5px var(--ink);
 }
@@ -115,7 +127,49 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2.5
   padding: 34px 16px 18px; min-height: 120px;
 }
 .shelf + .shelf { margin-top: 22px; }             /* space between shelves */
-.shelf h3 { margin: 0 0 8px 4px; font-size: 16px; font-weight: 700; color: var(--label); }  /* 'Spices · 26' */
+.shelf h3 { margin: 0 0 8px 4px; font-size: 16px; font-weight: 400; font-style: italic; color: var(--label); }  /* 'Spices · 26' */
+
+/* candles on the roof of the top unit in each column, with wax dripping over the edge */
+.candles {
+  position: absolute; top: -53px; left: 56px; height: 50px; z-index: 2;  /* bottom sits on the roof */
+  display: flex; align-items: flex-end; gap: 6px; pointer-events: none;
+}
+.candles::before {                                /* puddle of wax on the roof + drips down the front */
+  content: ""; position: absolute; left: -8px; top: 100%; width: 64px; height: 32px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32' fill='%23f0f0f0'%3E%3Crect width='64' height='6' rx='3'/%3E%3Crect x='4' width='6' height='14' rx='3'/%3E%3Crect x='14' width='6' height='24' rx='3'/%3E%3Crect x='23' width='6' height='9' rx='3'/%3E%3Crect x='33' width='6' height='19' rx='3'/%3E%3Crect x='46' width='6' height='30' rx='3'/%3E%3Crect x='56' width='6' height='12' rx='3'/%3E%3C/svg%3E") no-repeat;
+}
+.candles i {                                      /* one white pillar candle */
+  position: relative; width: 12px; height: 34px; background: #f5f5f5;
+  border: 2px solid var(--ink); border-bottom: none; border-radius: 4px 4px 0 0;
+}
+.candles i:nth-child(2) { height: 22px; width: 11px; }  /* uneven heights, like real candles */
+.candles i:nth-child(3) { height: 44px; }
+.candles i::before {                              /* teardrop flame with a soft glow */
+  content: ""; position: absolute; left: 50%; bottom: calc(100% + 3px); width: 9px; height: 15px;
+  transform: translateX(-50%); background: #fafafa; border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+  box-shadow: 0 0 12px 5px #ffffff26; transform-origin: 50% 100%;
+  animation: flicker 2.4s ease-in-out infinite alternate;
+}
+.candles i:nth-child(2)::before { animation-delay: -.8s; }
+.candles i:nth-child(3)::before { animation-delay: -1.6s; }
+.candles i::after {                               /* red-hot core at the bottom of the flame */
+  content: ""; position: absolute; left: 50%; bottom: calc(100% + 4px); width: 4px; height: 6px;
+  transform: translateX(-50%); background: var(--out); border-radius: 50%;
+}
+@keyframes flicker {                              /* gentle sway + flutter of the flame */
+  0%   { transform: translateX(-50%) scale(1, 1) rotate(-2deg); }
+  40%  { transform: translateX(-50%) scale(.92, 1.08) rotate(2deg); }
+  70%  { transform: translateX(-50%) scale(1.04, .95) rotate(-1deg); }
+  100% { transform: translateX(-50%) scale(.96, 1.04) rotate(1.5deg); }
+}
+@media (prefers-reduced-motion: reduce) { .candles i::before { animation: none; } }  /* no flicker if motion is turned down */
+
+/* cobweb in the inside wall's top-right corner */
+.web {
+  position: absolute; top: 14px; right: 14px; width: 54px; height: 54px; pointer-events: none; z-index: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52' fill='none' stroke='%238c8c8c' stroke-width='1'%3E%3Cpath d='M52 0L0 0M52 0L4 20M52 0L15 37M52 0L32 48M52 0L52 52'/%3E%3Cpath d='M36 0Q38 4 37.2 6.2Q40 8 40.7 11.3Q44 12 45.8 14.8Q49 14 52 16'/%3E%3Cpath d='M22 0Q26 7 24.3 11.5Q30 15 30.8 21.2Q37 22 40.5 27.7Q47 27 52 30'/%3E%3Cpath d='M8 0Q14 10 11.4 16.9Q19 24 20.9 31.1Q30 34 35.1 40.6Q45 40 52 44'/%3E%3C/svg%3E") no-repeat;
+}
+.unit.cold .web { right: 34px; }                  /* keep clear of the door handle */
 .board {                                          /* chunky shelf board (tiles sit on it) */
   height: 14px; margin: 0 -10px; border: 2.5px solid var(--ink); border-radius: 999px;
   background: var(--shelf); box-shadow: 0 5px 0 var(--shadow);
@@ -137,9 +191,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2.5
   box-shadow: 3px 4px 0 var(--shadow); cursor: pointer; text-align: center;
   transition: transform .12s;                     /* smooth wiggle */
 }
-.tile::before {                                   /* glossy shine strip */
-  content: ""; position: absolute; top: 5px; left: 16px; right: 16px; height: 9px;
-  border-radius: 9px; background: #ffffff80;
+.tile::before {                                   /* tarot-card inner border */
+  content: ""; position: absolute; inset: 5px; border-radius: 17px; pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--c) 45%, var(--ink));
+}
+.tile::after {                                    /* little ✦ stars in the two top corners (justify pushes them apart) */
+  content: "✦ ✦"; position: absolute; top: 6px; left: 10px; right: 10px; pointer-events: none;
+  font-size: 9px; line-height: 1; color: color-mix(in srgb, var(--c) 45%, var(--ink));
+  text-align: justify; text-align-last: justify;
 }
 .tile:hover { transform: translateY(-3px) rotate(-1.5deg); }  /* playful wiggle on hover */
 .tile:active { transform: scale(.95); }           /* squish when pressed */
@@ -255,8 +314,8 @@ select.filter { padding: 6px 12px; border: 2.5px solid var(--ink); border-radius
 
 /* ---------------------------------------------------------------- spiral notebook (tabs + pages) */
 :root {
-  --paper: #f4f4f4;                               /* plain white-grey notebook paper */
-  --comic: "Comic Neue", "Comic Sans MS", "Chalkboard SE", cursive;  /* comic font (Chalkboard = iPhone's comic-ish font) */
+  --paper: #efefef;                               /* pale grey grimoire page */
+  --comic: var(--font);                           /* the grimoire uses the old-book font (name kept so the rules below still work) */
   --coil: #9e9e9e;                                /* metal spiral colour */
 }
 .tabs {                                           /* the notebook's top: paper strip with a spiral binding */
@@ -265,15 +324,10 @@ select.filter { padding: 6px 12px; border: 2.5px solid var(--ink); border-radius
   font-family: var(--comic);
   position: sticky;
 }
-.tabs::before {                                   /* punched holes along the top */
-  content: ""; position: absolute; left: 14px; right: 14px; top: 13px; height: 9px;
-  background: radial-gradient(circle, var(--ink) 0 4px, transparent 4.5px) 0 0 / 24px 9px repeat-x;
-}
-.tabs::after {                                    /* metal coil loops poking up through the holes */
-  content: ""; position: absolute; left: 14px; right: 14px; top: -12px; height: 30px;
-  background: radial-gradient(ellipse 7px 14px at 12px 15px, transparent 0 4px, var(--coil) 4.5px 7px, transparent 7.5px) 0 0 / 24px 30px repeat-x;
-  -webkit-mask: linear-gradient(#000 0 60%, transparent 60%);  /* only the top part of each loop shows above the paper */
-          mask: linear-gradient(#000 0 60%, transparent 60%);
+.tabs::before {                                   /* grimoire: a row of moon phases across the top of the page */
+  content: "🌑 🌒 🌓 🌔 🌕 🌖 🌗 🌘 🌑 🌒 🌓 🌔 🌕 🌖 🌗 🌘"; position: absolute; left: 14px; right: 14px; top: 6px;
+  font-size: 16px; line-height: 1; letter-spacing: 3px; text-align: center; white-space: nowrap; overflow: hidden;
+  filter: grayscale(1) contrast(1.6);             /* black & white moons */
 }
 .tabs button {                                    /* coloured index tabs */
   flex: 1; justify-content: center; font-family: var(--comic); font-weight: 700; font-size: 17px;
@@ -288,6 +342,9 @@ select.filter { padding: 6px 12px; border: 2.5px solid var(--ink); border-radius
 .tabs [data-view="shopping"]  { --tab: #bfbfbf; }
 .tabs [data-view="cook"]      { --tab: #a6a6a6; }
 .tabs [data-view="leftovers"] { --tab: #8c8c8c; }
+.tabs [data-view="projects"]  { --tab: #7a7a7a; }
+.project { cursor: pointer; }                     /* tap a project to edit it */
+.project .notes { font-size: 15px; white-space: pre-line; margin-top: 2px; }  /* keep the line breaks you typed */
 
 .panel .card {                                    /* pages = lined notebook paper with a red margin */
   font-family: var(--comic); font-size: 17px; border-radius: 0 0 26px 26px; margin-top: 0;

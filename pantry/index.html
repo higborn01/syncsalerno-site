@@ -15,8 +15,8 @@
 <link rel="manifest" href="manifest.webmanifest">                          <!-- web-app settings (name, icons, colours) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">                <!-- start connecting to Google Fonts early -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">  <!-- bubbly cartoon font -->
-<link rel="stylesheet" href="style.css?v=6">                               <!-- our styles (?v= = version, so browsers fetch the new file) -->
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia&display=swap" rel="stylesheet">  <!-- old-book font + blackletter font -->
+<link rel="stylesheet" href="style.css?v=8">                               <!-- our styles (?v= = version, so browsers fetch the new file) -->
 </head>
 <body>
 
@@ -35,6 +35,7 @@
   <button data-view="shopping">🛒<span>Shopping</span></button>
   <button data-view="cook">🍳<span>Cook</span></button>
   <button data-view="leftovers">🍱<span>Leftovers</span></button>
+  <button data-view="projects">⚗️<span>Projects</span></button>
 </nav>
 
 <main>
@@ -46,12 +47,16 @@
   <section id="view-shopping" class="view panel"></section>      <!-- shopping list -->
   <section id="view-cook" class="view panel"></section>          <!-- what can I cook? -->
   <section id="view-leftovers" class="view panel"></section>     <!-- leftovers -->
+  <section id="view-projects" class="view panel"></section>      <!-- ongoing projects -->
 </main>
 
 <button id="fab" class="fab" aria-label="Add to pantry">+</button>  <!-- big round + : add something -->
 
 <!-- Item editor (opens over everything) -->
 <dialog id="sheet" class="sheet"><form id="item-form" method="dialog"></form></dialog>
+
+<!-- Project editor -->
+<dialog id="project-sheet" class="sheet small"><form id="project-form" method="dialog"></form></dialog>
 
 <!-- Menu -->
 <dialog id="menu" class="sheet small">
@@ -77,7 +82,7 @@
 
 <div id="toast" class="toast"></div>   <!-- small pop-up messages -->
 
-<script type="module" src="app.js?v=6"></script>  <!-- the app (type=module lets files import each other); ?v=6 = version, so browsers fetch new code -->
+<script type="module" src="app.js?v=8"></script>  <!-- the app (type=module lets files import each other); ?v=8 = version, so browsers fetch new code -->
 <!-- When you change any .js file: bump the ?v= number here AND on the imports at the top of app.js. -->
 </body>
 </html>

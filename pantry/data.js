@@ -16,6 +16,7 @@ export class LocalStore {
     this.listeners = [];                              // functions to call whenever data changes
     try { this.state = JSON.parse(localStorage.getItem(key)) || null; } catch { this.state = null; }  // load saved data (may be blocked/empty)
     this.state = this.state || { items: [], extras: [], dishes: [] };  // start empty if nothing saved
+    this.state.projects ||= [];                       // older saved data has no projects yet
   }
   subscribe(fn) { this.listeners.push(fn); fn(this.state); }  // register + send the current data straight away
   save() {                                            // write to the browser + tell the app
@@ -31,10 +32,14 @@ export class LocalStore {
     this.state.extras.push({ id: newId(), name }); this.save();
   }
   async removeExtra(id) { this.state.extras = this.state.extras.filter((e) => e.id !== id); this.save(); }
+  async addProject(fields) { this.state.projects.push({ ...fields, id: newId() }); this.save(); }  // ongoing projects
+  async updateProject(id, fields) { this.state.projects = this.state.projects.map((p) => (p.id === id ? { ...p, ...fields } : p)); this.save(); }
+  async deleteProject(id) { this.state.projects = this.state.projects.filter((p) => p.id !== id); this.save(); }
   async importAll(data) {                             // one-time import from the desktop app's export file
     this.state = { items: data.items.map((i) => ({ ...i, id: newId() })),          // fresh ids
                    extras: data.extras.map((name) => ({ id: newId(), name })),
-                   dishes: data.dishes };
+                   dishes: data.dishes,
+                   projects: (data.projects || []).map(({ id, ...p }) => ({ ...p, id: newId() })) };
     this.save();
   }
 }
@@ -63,13 +68,15 @@ export class FirebaseStore {
     this.items = fs.collection(db, this.base, "items");     // collection = like a table; one document per item
     this.extras = fs.collection(db, this.base, "extras");   // shopping-list extras
     this.dishDoc = fs.doc(db, this.base, "meta", "dishes"); // one document holding all dishes (as JSON text)
-    this.state = { items: [], extras: [], dishes: [] };     // latest data
+    this.projects = fs.collection(db, this.base, "projects"); // ongoing projects, one document each
+    this.state = { items: [], extras: [], dishes: [], projects: [] };  // latest data
     this.listeners = [];
     this.unsubs = [                                   // onSnapshot = "call me now and every time this changes" (this is the live sync)
       fs.onSnapshot(this.items, (snap) => this.set("items", snap.docs.map((d) => ({ ...d.data(), id: d.id })))),
       fs.onSnapshot(this.extras, (snap) => this.set("extras", snap.docs.map((d) => ({ ...d.data(), id: d.id }))
         .sort((a, b) => (a.added || "").localeCompare(b.added || "")))),  // oldest first
       fs.onSnapshot(this.dishDoc, (snap) => this.set("dishes", snap.exists() ? JSON.parse(snap.data().json) : [])),
+      fs.onSnapshot(this.projects, (snap) => this.set("projects", snap.docs.map((d) => ({ ...d.data(), id: d.id })))),
     ];
   }
   set(key, value) { this.state = { ...this.state, [key]: value }; this.listeners.forEach((fn) => fn(this.state)); }  // update + notify
@@ -97,12 +104,25 @@ export class FirebaseStore {
     await this.fs.addDoc(this.extras, { name, added: new Date().toISOString() });
   }
   async removeExtra(id) { await this.fs.deleteDoc(this.fs.doc(this.extras, id)); }
+  async addProject(fields) {                          // projects also change the stamp, so the desktop app picks them up
+    const batch = this.fs.writeBatch(fb.db);
+    batch.set(this.fs.doc(this.projects), fields); this.stamp(batch); await batch.commit();
+  }
+  async updateProject(id, fields) {
+    const batch = this.fs.writeBatch(fb.db);
+    batch.update(this.fs.doc(this.projects, id), fields); this.stamp(batch); await batch.commit();
+  }
+  async deleteProject(id) {
+    const batch = this.fs.writeBatch(fb.db);
+    batch.delete(this.fs.doc(this.projects, id)); this.stamp(batch); await batch.commit();
+  }
   async importAll(data) {                             // one-time import: write everything in batches
     const { fs } = this;
     const writes = [                                  // list of "write this document" jobs
       ...data.items.map(({ id, ...item }) => [fs.doc(this.items), item]),            // fs.doc(collection) = new random id
       ...data.extras.map((name, n) => [fs.doc(this.extras), { name, added: `0000-${String(n).padStart(4, "0")}` }]),  // keep order
       [this.dishDoc, { json: JSON.stringify(data.dishes) }],                          // dishes as one JSON text field
+      ...(data.projects || []).map(({ id, ...p }) => [fs.doc(this.projects), p]),      // ongoing projects (if the file has any)
     ];
     for (let i = 0; i < writes.length; i += 400) {    // a batch can hold at most 500 writes, so do 400 at a time
       const batch = fs.writeBatch(fb.db);             // batch = several writes saved together
