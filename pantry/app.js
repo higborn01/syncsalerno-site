@@ -1,8 +1,8 @@
 // app.js - the screens: shelves, item editor, shopping list, what can I cook?, leftovers, menu, sign-in.
-// ?v=9 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
-import { firebaseConfig } from "./firebase-config.js?v=9";             // your Firebase settings (or null)
-import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=9"; // where data is kept
-import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=9";
+// ?v=10 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
+import { firebaseConfig } from "./firebase-config.js?v=10";             // your Firebase settings (or null)
+import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=10"; // where data is kept
+import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=10";
 
 const $ = (sel) => document.querySelector(sel);   // shortcut: find one element by CSS selector
 
@@ -180,7 +180,7 @@ let scanFound = [];                               // what Gemini found in the la
 async function startScan(file) {                  // a photo was picked: send it to Gemini
   toast("📷 Looking at your photo…");             // let you know it's working (takes a few seconds)
   try {
-    const { scanPhoto } = await import("./scan.js?v=9");  // load the scan code only when first used (keeps start-up fast)
+    const { scanPhoto } = await import("./scan.js?v=10");  // load the scan code only when first used (keeps start-up fast)
     scanFound = await scanPhoto(file, firebaseConfig, data.items.map((i) => i.name), CATEGORIES);  // ask Gemini
   } catch (e) { alert(e.message); return; }       // plain-words error from scan.js
   if (!scanFound.length) { alert("Gemini didn't spot any food in that photo."); return; }

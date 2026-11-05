@@ -4,7 +4,7 @@
 // It loads its OWN newer copy of Firebase (13.2.0, under a separate app name), so the sign-in + sync code in data.js is untouched.
 
 const SDK = "https://www.gstatic.com/firebasejs/13.2.0/";  // newer Firebase library (the AI part needs it)
-const MODEL = "gemini-2.5-flash";                         // Gemini model with a free tier; change here if Google renames it
+const MODEL = "gemini-3.8-flash";                         // Gemini model with a free tier (2.5 was retired for new projects); change here if Google renames it
 const MAX_SIDE = 1600;                                    // shrink photos so the longest side is at most this many pixels
 
 let model = null;                                         // the ready-to-use Gemini model (set up on first scan)
@@ -70,6 +70,8 @@ export async function scanPhoto(file, config, existingNames, categories) {  // t
     console.error(e);                                     // full details in the browser console
     const msg = String(e.message || e);
     if (/429|quota|RESOURCE_EXHAUSTED/i.test(msg)) throw new Error("Gemini's free limit was reached - wait a minute and try again.");
+    if (/high demand|overloaded|UNAVAILABLE|\b50[03]\b/i.test(msg)) throw new Error("Gemini is busy right now - try again in a few minutes.");  // Google's servers are swamped (not your fault)
+    if (/no longer available|not found|\b404\b/i.test(msg)) throw new Error("Google retired this Gemini model - the MODEL line in scan.js needs a newer name.");
     if (/api-not-enabled|not been used|disabled|firebasevertexai|firebaseml|AI Logic/i.test(msg))
       throw new Error("Photo scan isn't switched on yet: Firebase console → AI Logic → Get started → Gemini Developer API.");
     throw new Error("Couldn't scan the photo: " + msg.slice(0, 160));
