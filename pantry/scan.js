@@ -4,20 +4,27 @@
 // It loads its OWN newer copy of Firebase (13.2.0, under a separate app name), so the sign-in + sync code in data.js is untouched.
 
 const SDK = "https://www.gstatic.com/firebasejs/13.2.0/";  // newer Firebase library (the AI part needs it)
-const MODEL = "gemini-3.8-flash";                         // Gemini model with a free tier (2.5 was retired for new projects); change here if Google renames it
+// Free Gemini models to try, best first. If one is busy (or Google retired it), the next one is tried automatically.
+// (2.5 models were retired for new projects; change these names if Google renames them again.)
+const MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite"];
+const TIMEOUT_MS = 45000;                                 // give each model 45 s - a swamped model can take minutes just to say "busy"
 const MAX_SIDE = 1600;                                    // shrink photos so the longest side is at most this many pixels
 
-let model = null;                                         // the ready-to-use Gemini model (set up on first scan)
+let ai = null, backend = null;                            // the loaded Firebase AI library + connection (set up on first scan)
+const models = {};                                        // model name -> ready-to-use model (each set up the first time it's needed)
 
-async function getModel(config, categories) {             // load Firebase AI once and set up the model
-  if (model) return model;                                // already done
-  const [{ initializeApp }, ai] = await Promise.all([      // download both parts at once
-    import(SDK + "firebase-app.js"), import(SDK + "firebase-ai.js")]);
-  const app = initializeApp(config, "scan");              // a separate Firebase app named "scan" (doesn't touch the sync one)
-  const backend = ai.getAI(app, { backend: new ai.GoogleAIBackend() });  // GoogleAIBackend = Gemini Developer API (the free one)
+async function getModel(name, config, categories) {       // load Firebase AI once, then set up the named model
+  if (models[name]) return models[name];                  // already done
+  if (!ai) {                                              // first scan: load the library
+    let initializeApp;
+    [{ initializeApp }, ai] = await Promise.all([         // download both parts at once
+      import(SDK + "firebase-app.js"), import(SDK + "firebase-ai.js")]);
+    const app = initializeApp(config, "scan");            // a separate Firebase app named "scan" (doesn't touch the sync one)
+    backend = ai.getAI(app, { backend: new ai.GoogleAIBackend() });  // GoogleAIBackend = Gemini Developer API (the free one)
+  }
   const { Schema } = ai;                                  // helpers that describe the JSON shape we want back
-  model = ai.getGenerativeModel(backend, {                // the model, set to always answer with our JSON shape
-    model: MODEL,
+  return (models[name] = ai.getGenerativeModel(backend, { // the model, set to always answer with our JSON shape
+    model: name,
     generationConfig: {
       responseMimeType: "application/json",               // reply with JSON only
       responseSchema: Schema.array({ items: Schema.object({ properties: {  // a list of objects, each with:
@@ -27,8 +34,7 @@ async function getModel(config, categories) {             // load Firebase AI on
         unit: Schema.string(),                            //   'can'
       } }) }),
     },
-  });
-  return model;
+  }, { timeout: TIMEOUT_MS }));                           // request options: give up after TIMEOUT_MS
 }
 
 async function shrink(file) {                             // photo file -> small JPEG as base64 text
@@ -61,20 +67,26 @@ function prompt(existingNames) {                          // the instructions se
 }
 
 export async function scanPhoto(file, config, existingNames, categories) {  // the one function app.js calls
-  const m = await getModel(config, categories);           // Gemini, ready to go
   const data = await shrink(file);                        // small JPEG
-  let result;
-  try {
-    result = await m.generateContent([prompt(existingNames), { inlineData: { data, mimeType: "image/jpeg" } }]);  // ask!
-  } catch (e) {                                           // turn Firebase's errors into plain words
-    console.error(e);                                     // full details in the browser console
-    const msg = String(e.message || e);
-    if (/429|quota|RESOURCE_EXHAUSTED/i.test(msg)) throw new Error("Gemini's free limit was reached - wait a minute and try again.");
-    if (/high demand|overloaded|UNAVAILABLE|\b50[03]\b/i.test(msg)) throw new Error("Gemini is busy right now - try again in a few minutes.");  // Google's servers are swamped (not your fault)
-    if (/no longer available|not found|\b404\b/i.test(msg)) throw new Error("Google retired this Gemini model - the MODEL line in scan.js needs a newer name.");
-    if (/api-not-enabled|not been used|disabled|firebasevertexai|firebaseml|AI Logic/i.test(msg))
-      throw new Error("Photo scan isn't switched on yet: Firebase console → AI Logic → Get started → Gemini Developer API.");
-    throw new Error("Couldn't scan the photo: " + msg.slice(0, 160));
+  const parts = [prompt(existingNames), { inlineData: { data, mimeType: "image/jpeg" } }];  // instructions + photo
+  let result = null, lastMsg = "";
+  for (const name of MODELS) {                            // try each model in turn
+    try {
+      const m = await getModel(name, config, categories); // that model, ready to go
+      result = await m.generateContent(parts);            // ask!
+      break;                                              // got an answer - stop trying
+    } catch (e) {                                         // turn Firebase's errors into plain words
+      console.error(name, e);                             // full details in the browser console
+      lastMsg = String(e.message || e);
+      if (/api-not-enabled/i.test(lastMsg))               // AI Logic not switched on: no point trying other models
+        throw new Error("Photo scan isn't switched on yet: Firebase console → AI Logic → Get started → Gemini Developer API.");
+      const tryNext = /high demand|overloaded|UNAVAILABLE|\b50[03]\b|timeout|timed out|abort|no longer available|not found|\b404\b|429|quota|RESOURCE_EXHAUSTED/i;
+      if (!tryNext.test(lastMsg)) throw new Error("Couldn't scan the photo: " + lastMsg.slice(0, 160));  // a different problem: stop here
+    }                                                     // busy / retired / over its limit: loop on to the next model
+  }
+  if (!result) {                                          // every model was busy or over its limit
+    if (/429|quota|RESOURCE_EXHAUSTED/i.test(lastMsg)) throw new Error("Gemini's free limit was reached - wait a minute and try again.");
+    throw new Error("Gemini is busy right now - try again in a few minutes.");  // Google's servers are swamped (not your fault)
   }
   const items = JSON.parse(result.response.text());       // the JSON list
   return items.map((it) => ({                             // tidy each item
