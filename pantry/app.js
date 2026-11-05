@@ -1,8 +1,8 @@
 // app.js - the screens: shelves, item editor, shopping list, what can I cook?, leftovers, menu, sign-in.
-// ?v=8 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
-import { firebaseConfig } from "./firebase-config.js?v=8";             // your Firebase settings (or null)
-import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=8"; // where data is kept
-import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=8";
+// ?v=9 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
+import { firebaseConfig } from "./firebase-config.js?v=9";             // your Firebase settings (or null)
+import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=9"; // where data is kept
+import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=9";
 
 const $ = (sel) => document.querySelector(sel);   // shortcut: find one element by CSS selector
 
@@ -129,6 +129,8 @@ function fillSheet(item) {                        // build the editor's contents
   $("#item-form").innerHTML = `
     <div class="sheet-head"><span class="big">${isNew ? "🛒" : emojiFor(it)}</span>
       <h2>${isNew ? "Add to pantry" : esc(it.name)}</h2><button type="button" class="close" data-act="close">✕</button></div>
+    ${isNew && firebaseConfig ? `<div class="row"><button type="button" class="btn scan-btn" data-act="scan">📷 Scan a photo of a shelf</button></div>
+      <p class="muted center">or add one thing by hand:</p>` : ""}
     ${isNew ? "" : `<div class="row"><span class="badge s-${status}">${status}</span><span class="muted">${esc(it.category)} · ${esc(it.location)}</span></div>
       <div class="stepper"><button type="button" data-act="minus">−</button><span class="big-qty">${esc(qtyLabel(it))}</span>
       <button type="button" data-act="plus">+</button></div>`}
@@ -170,6 +172,78 @@ async function saveSheet() {                      // 'Save' / 'Add it'
   if (editingId) await changeItem(editingId, fields);
   else { await store.addItem({ ...fields, updated: today() }); toast(`Added ${name}!`); }
   $("#sheet").close();
+}
+
+// ================================================================ photo scan (Gemini via Firebase AI Logic, free tier)
+let scanFound = [];                               // what Gemini found in the last photo
+
+async function startScan(file) {                  // a photo was picked: send it to Gemini
+  toast("📷 Looking at your photo…");             // let you know it's working (takes a few seconds)
+  try {
+    const { scanPhoto } = await import("./scan.js?v=9");  // load the scan code only when first used (keeps start-up fast)
+    scanFound = await scanPhoto(file, firebaseConfig, data.items.map((i) => i.name), CATEGORIES);  // ask Gemini
+  } catch (e) { alert(e.message); return; }       // plain-words error from scan.js
+  if (!scanFound.length) { alert("Gemini didn't spot any food in that photo."); return; }
+  fillScanSheet();                                // show the list to check
+  $("#scan-sheet").showModal();
+}
+
+function fillScanSheet() {                        // build the "check before saving" sheet
+  const byName = new Map(data.items.map((i) => [i.name.toLowerCase(), i]));  // lower-case name -> item you already have
+  const opt = (list, cur) => list.map((v) => `<option${v === cur ? " selected" : ""}>${esc(v)}</option>`).join("");  // <select> choices
+  $("#scan-form").innerHTML = `
+    <div class="sheet-head"><span class="big">📷</span><h2>Found ${scanFound.length} things</h2>
+      <button type="button" class="close" data-act="close">✕</button></div>
+    <p class="muted">Untick anything wrong and fix names or amounts, then Save.</p>
+    <div class="field"><span>New items go in</span><select name="location">${opt(LOCATIONS, unitFilter !== "All" ? unitFilter : "Pantry")}</select></div>
+    <div class="field"><span>Items I already have</span><select name="mode">
+      <option value="set">Set amount to what's in the photo</option>
+      <option value="add">Add to amount (just bought)</option></select></div>
+    ${scanFound.map((it, n) => {                   // one row per item found
+      const have = byName.get(it.name.toLowerCase());
+      return `<div class="scan-row">
+        <input type="checkbox" name="add${n}" checked aria-label="Save this one">
+        <div class="scan-fields">
+          <input name="name${n}" value="${esc(it.name)}" aria-label="Name">
+          <div class="scan-line">
+            <input name="qty${n}" value="${it.qty}" inputmode="decimal" aria-label="Qty">
+            <input name="unit${n}" value="${esc(it.unit)}" placeholder="unit" aria-label="Unit">
+            <select name="cat${n}" aria-label="Shelf">${opt(CATEGORIES, it.category)}</select>
+          </div>
+          <small class="muted">${have ? `have ${esc(qtyLabel(have))} (${esc(have.location)})` : "new"}</small>
+        </div></div>`;
+    }).join("")}
+    <p class="error" id="scan-error"></p>
+    <div class="row"><button class="btn primary" type="submit">Save</button>
+      <button type="button" class="btn" data-act="close">Cancel</button></div>`;
+}
+
+async function saveScan() {                       // 'Save' on the scan sheet
+  const f = Object.fromEntries(new FormData($("#scan-form")));  // all the boxes; unticked checkboxes are simply missing
+  const byName = new Map(data.items.map((i) => [i.name.toLowerCase(), i]));  // items you already have
+  const rows = [];                                // the ticked rows, checked first so nothing saves if one is wrong
+  for (let n = 0; n < scanFound.length; n++) {
+    if (!f["add" + n]) continue;                  // unticked
+    const name = f["name" + n].trim(); if (!name) continue;  // blank name = skip
+    const qty = Number(f["qty" + n]);             // amount as a number
+    if (f["qty" + n].trim() === "" || Number.isNaN(qty)) { $("#scan-error").textContent = `Qty for "${name}" must be a number.`; return; }
+    rows.push({ name, qty, unit: f["unit" + n].trim(), category: f["cat" + n] });
+  }
+  let added = 0, updated = 0;                     // counts for the message at the end
+  for (const r of rows) {
+    const have = byName.get(r.name.toLowerCase()); // already in the pantry?
+    if (have) {                                   // yes: change its amount
+      await changeItem(have.id, { qty: f.mode === "set" ? r.qty : (have.qty || 0) + r.qty });  // set, or add on top
+      updated++;
+    } else {                                      // no: add it
+      const fields = { ...r, min_qty: 0, location: f.location, notes: "added from photo scan", updated: today() };
+      const id = await store.addItem(fields);     // save it (addItem hands back the new id)
+      byName.set(r.name.toLowerCase(), { ...fields, id });  // so a duplicate row further down updates it instead of adding a second copy
+      added++;
+    }
+  }
+  $("#scan-sheet").close();
+  toast(`Added ${added} new, updated ${updated}!`);
 }
 
 // ================================================================ shopping list
@@ -359,12 +433,22 @@ function wireUpEvents() {
     const act = e.target.closest("[data-act]")?.dataset.act; if (!act) return;
     const item = data.items.find((i) => i.id === editingId);
     if (act === "close") $("#sheet").close();
+    if (act === "scan") { $("#sheet").close(); $("#scan-file").click(); }  // close the editor and open the photo picker
     if (act === "plus" && item) changeItem(item.id, { qty: (item.qty || 0) + 1 });
     if (act === "minus" && item) changeItem(item.id, { qty: Math.max(0, (item.qty || 0) - 1) });
     if (act === "usedup" && item) { changeItem(item.id, { qty: 0 }); $("#sheet").close(); }
     if (act === "remove" && item && confirm(`Remove "${item.name}" from the pantry?`)) { await store.deleteItem(item.id); $("#sheet").close(); }
   });
   $("#sheet").addEventListener("close", () => { editingId = null; });
+
+  $("#scan-file").addEventListener("change", (e) => {           // a photo was picked (or taken)
+    const file = e.target.files[0]; e.target.value = "";        // grab it, then clear so the same photo can be picked again
+    if (file) startScan(file);
+  });
+  $("#scan-form").addEventListener("submit", (e) => { e.preventDefault(); saveScan(); });  // Save
+  $("#scan-form").addEventListener("click", (e) => {            // ✕ / Cancel
+    if (e.target.closest("[data-act]")?.dataset.act === "close") $("#scan-sheet").close();
+  });
 
   $("#view-shopping").addEventListener("change", (e) => {       // tick / untick
     const key = e.target.dataset.key; if (!key) return;

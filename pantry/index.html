@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">                <!-- start connecting to Google Fonts early -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=UnifrakturMaguntia&display=swap" rel="stylesheet">  <!-- old-book font + blackletter font -->
-<link rel="stylesheet" href="style.css?v=8">                               <!-- our styles (?v= = version, so browsers fetch the new file) -->
+<link rel="stylesheet" href="style.css?v=9">                               <!-- our styles (?v= = version, so browsers fetch the new file) -->
 </head>
 <body>
 
@@ -55,6 +55,10 @@
 <!-- Item editor (opens over everything) -->
 <dialog id="sheet" class="sheet"><form id="item-form" method="dialog"></form></dialog>
 
+<!-- Photo scan: hidden picker (phones offer Camera or Photo Library) + the "check what Gemini found" sheet -->
+<input id="scan-file" type="file" accept="image/*" hidden>                 <!-- image/* = any photo; iPhone sends .heic as JPEG -->
+<dialog id="scan-sheet" class="sheet"><form id="scan-form" method="dialog"></form></dialog>
+
 <!-- Project editor -->
 <dialog id="project-sheet" class="sheet small"><form id="project-form" method="dialog"></form></dialog>
 
@@ -82,7 +86,7 @@
 
 <div id="toast" class="toast"></div>   <!-- small pop-up messages -->
 
-<script type="module" src="app.js?v=8"></script>  <!-- the app (type=module lets files import each other); ?v=8 = version, so browsers fetch new code -->
+<script type="module" src="app.js?v=9"></script>  <!-- the app (type=module lets files import each other); ?v=9 = version, so browsers fetch new code -->
 <!-- When you change any .js file: bump the ?v= number here AND on the imports at the top of app.js. -->
 </body>
 </html>
