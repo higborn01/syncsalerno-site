@@ -1,8 +1,9 @@
 // app.js - the screens: shelves, item editor, shopping list, what can I cook?, leftovers, menu, sign-in.
-// ?v=11 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
-import { firebaseConfig } from "./firebase-config.js?v=11";             // your Firebase settings (or null)
-import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=11"; // where data is kept
-import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=11";
+// ?v=13 on each file = version number; bump it (here + in index.html) after changing code, so phones don't keep an old copy
+import { firebaseConfig } from "./firebase-config.js?v=13";             // your Firebase settings (or null)
+import { LocalStore, FirebaseStore, loadFirebase } from "./data.js?v=13"; // where data is kept
+import { CATEGORIES, LOCATIONS, LEFTOVER_DAYS, statusOf, qtyLabel, today, daysSince, emojiFor, rankDishes } from "./logic.js?v=13";
+import { productId, howMany, cartUrl, searchUrl } from "./walmart.js?v=13";  // Walmart links (cart + search)
 
 const $ = (sel) => document.querySelector(sel);   // shortcut: find one element by CSS selector
 
@@ -141,6 +142,8 @@ function fillSheet(item) {                        // build the editor's contents
     <div class="field"><span>Category</span><select name="category">${opt(CATEGORIES, it.category)}</select></div>
     <div class="field"><span>Location</span><select name="location">${opt(LOCATIONS, it.location)}</select></div>
     <div class="field"><span>Notes</span><input name="notes" value="${esc(it.notes)}"></div>
+    <div class="field"><span>Walmart</span><input name="walmart" value="${esc(walmartFor(it.name))}" placeholder="paste the walmart.com product link"></div>
+    ${isNew ? "" : `<p class="muted walmart-find"><a href="${esc(searchUrl(it.name))}" target="_blank" rel="noopener">Find ${esc(it.name)} on Walmart ↗</a> - open a product, copy its link, paste it above</p>`}
     <p class="error" id="sheet-error"></p>
     <div class="row">
       <button class="btn primary" type="submit">${isNew ? "Add it" : "Save"}</button>
@@ -168,6 +171,11 @@ async function saveSheet() {                      // 'Save' / 'Add it'
   const num = (s) => (s.trim() === "" ? null : Number(s));       // '' -> null (unknown), else a number
   const qty = num(f.qty), min = num(f.min_qty) ?? 0;
   if (Number.isNaN(qty) || Number.isNaN(min)) return err("Qty and Min must be numbers, like 2 or 0.5.");
+  const pid = productId(f.walmart);                             // Walmart product number ('' = none, null = not a Walmart link)
+  if (pid === null) return err("Walmart: paste a product link (it has /ip/ in it) or just the product number.");
+  const oldName = editingId ? data.items.find((i) => i.id === editingId)?.name : null;  // name before this edit (null when adding)
+  if (oldName && oldName.toLowerCase() !== name.toLowerCase() && walmartFor(oldName)) await store.setWalmart(oldName, "");  // renamed: forget the old name's product
+  if (pid !== walmartFor(name)) await store.setWalmart(name, pid);  // only save when it actually changed (each save syncs)
   const fields = { name, qty, unit: f.unit.trim(), min_qty: min, category: f.category, location: f.location, notes: f.notes.trim() };
   if (editingId) await changeItem(editingId, fields);
   else { await store.addItem({ ...fields, updated: today() }); toast(`Added ${name}!`); }
@@ -180,7 +188,7 @@ let scanFound = [];                               // what Gemini found in the la
 async function startScan(file) {                  // a photo was picked: send it to Gemini
   toast("📷 Looking at your photo…");             // let you know it's working (takes a few seconds)
   try {
-    const { scanPhoto } = await import("./scan.js?v=11");  // load the scan code only when first used (keeps start-up fast)
+    const { scanPhoto } = await import("./scan.js?v=13");  // load the scan code only when first used (keeps start-up fast)
     scanFound = await scanPhoto(file, firebaseConfig, data.items.map((i) => i.name), CATEGORIES);  // ask Gemini
   } catch (e) { alert(e.message); return; }       // plain-words error from scan.js
   if (!scanFound.length) { alert("Gemini didn't spot any food in that photo."); return; }
@@ -252,7 +260,8 @@ function shoppingGroups() {                       // [[category, [{key, text, su
   for (const item of [...data.items].sort((a, b) => a.name.localeCompare(b.name))) {
     const s = statusOf(item);
     if ((s === "Low" || s === "Out") && item.category !== "Leftovers")    // needs buying
-      (groups[item.category] ||= []).push({ key: "item:" + item.id, text: item.name, sub: `have ${qtyLabel(item)}, keep ${item.min_qty}` });
+      (groups[item.category] ||= []).push({ key: "item:" + item.id, text: item.name, sub: `have ${qtyLabel(item)}, keep ${item.min_qty}`,
+        walmart: walmartFor(item.name) });                                // its saved Walmart product ('' if none)
   }
   const order = (c) => (CATEGORIES.includes(c) ? CATEGORIES.indexOf(c) : 99);
   const out = Object.entries(groups).sort((a, b) => order(a[0]) - order(b[0]));
@@ -260,18 +269,36 @@ function shoppingGroups() {                       // [[category, [{key, text, su
   return out;
 }
 
+function walmartFor(name) {                       // the Walmart product number saved for an item name ('' if none)
+  return (data.walmart || {})[String(name || "").toLowerCase()] || "";  // looked up by lower-case name, like the desktop app
+}
+
+function walmartCart() {                          // what 'Send to Walmart cart' would add: [[product, how many], ...]
+  return data.items.filter((i) => !ticked.has("item:" + i.id))           // not ticked off yet
+    .filter((i) => ["Low", "Out"].includes(statusOf(i)) && i.category !== "Leftovers")  // on the shopping list
+    .filter((i) => walmartFor(i.name))                                    // has a Walmart product saved
+    .map((i) => [walmartFor(i.name), howMany(i)]);                        // product number + enough to get back to 'Min to keep'
+}
+
 function renderShopping() {
   const groups = shoppingGroups();
   const count = groups.reduce((n, [, rows]) => n + rows.length, 0);       // total rows
+  const cart = walmartCart();                                             // the items we can send to Walmart
+  const findLink = (r) => (r.walmart ? ` <small class="walmart-ok" title="Walmart product saved">🛒</small>` :  // has a product: little cart mark
+    ` <a class="walmart-find" href="${esc(searchUrl(r.text))}" target="_blank" rel="noopener">find</a>`);  // no product: search link
   $("#view-shopping").innerHTML = `<div class="card">
     <h2>🛒 Shopping list</h2><p class="muted">${count ? `${count} things - everything Low or Out, plus extras. Tap to tick off.` : "Nothing to buy!"}</p>
     ${groups.map(([cat, rows]) => `<h3>${esc(cat)}</h3>${rows.map((r) => `
       <label class="check${ticked.has(r.key) ? " done" : ""}"><input type="checkbox" data-key="${esc(r.key)}" ${ticked.has(r.key) ? "checked" : ""}>
-      <span>${esc(r.text)} ${r.sub ? `<small>(${esc(r.sub)})</small>` : ""}</span></label>`).join("")}`).join("")}
+      <span>${esc(r.text)} ${r.sub ? `<small>(${esc(r.sub)})</small>` : ""}${findLink(r)}</span></label>`).join("")}`).join("")}
     <form class="add-row" id="extra-form"><input name="extra" placeholder="Add something else…"><button class="btn">Add</button></form>
     <div class="row" style="margin-top:14px">
       <button class="btn primary" data-act="copy">${navigator.share ? "Share list" : "Copy list"}</button>
       <button class="btn" data-act="clear-extras">Remove ticked extras</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      ${cart.length ? `<a class="btn primary" href="${esc(cartUrl(cart))}" target="_blank" rel="noopener">🛒 Send ${cart.length} to Walmart cart</a>`  // a link, so phones open it reliably
+        : `<span class="muted">🛒 To fill your Walmart cart, save a Walmart product on each item (tap "find", copy the product's link, paste it into the item).</span>`}
     </div></div>`;
 }
 

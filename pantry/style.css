@@ -344,6 +344,8 @@ select.filter { padding: 6px 12px; border: 2.5px solid var(--ink); border-radius
 .tabs [data-view="leftovers"] { --tab: #8c8c8c; }
 .tabs [data-view="projects"]  { --tab: #7a7a7a; }
 .project { cursor: pointer; }                     /* tap a project to edit it */
+a.walmart-find, .walmart-find a { color: var(--ink); font-size: 14px; }  /* small 'find on Walmart' links, in ink not browser blue */
+a.btn { display: inline-block; text-decoration: none; }  /* links styled as buttons (Send to Walmart cart) */
 .project .notes { font-size: 15px; white-space: pre-line; margin-top: 2px; }  /* keep the line breaks you typed */
 
 .panel .card {                                    /* pages = lined notebook paper with a red margin */

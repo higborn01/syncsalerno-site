@@ -17,6 +17,7 @@ export class LocalStore {
     try { this.state = JSON.parse(localStorage.getItem(key)) || null; } catch { this.state = null; }  // load saved data (may be blocked/empty)
     this.state = this.state || { items: [], extras: [], dishes: [] };  // start empty if nothing saved
     this.state.projects ||= [];                       // older saved data has no projects yet
+    this.state.walmart ||= {};                        // item name (lower-case) -> Walmart product number; {} if none saved yet
   }
   subscribe(fn) { this.listeners.push(fn); fn(this.state); }  // register + send the current data straight away
   save() {                                            // write to the browser + tell the app
@@ -35,6 +36,11 @@ export class LocalStore {
   async addProject(fields) { this.state.projects.push({ ...fields, id: newId() }); this.save(); }  // ongoing projects
   async updateProject(id, fields) { this.state.projects = this.state.projects.map((p) => (p.id === id ? { ...p, ...fields } : p)); this.save(); }
   async deleteProject(id) { this.state.projects = this.state.projects.filter((p) => p.id !== id); this.save(); }
+  async setWalmart(name, pid) {                       // remember (or with pid '' forget) the Walmart product for an item
+    const map = { ...(this.state.walmart || {}) };    // copy of the current list
+    if (pid) map[name.toLowerCase()] = pid; else delete map[name.toLowerCase()];  // set it, or remove it
+    this.state.walmart = map; this.save();            // keep the new list + save to the browser
+  }
   async importAll(data) {                             // one-time import from the desktop app's export file
     this.state = { items: data.items.map((i) => ({ ...i, id: newId() })),          // fresh ids
                    extras: data.extras.map((name) => ({ id: newId(), name })),
@@ -69,7 +75,8 @@ export class FirebaseStore {
     this.extras = fs.collection(db, this.base, "extras");   // shopping-list extras
     this.dishDoc = fs.doc(db, this.base, "meta", "dishes"); // one document holding all dishes (as JSON text)
     this.projects = fs.collection(db, this.base, "projects"); // ongoing projects, one document each
-    this.state = { items: [], extras: [], dishes: [], projects: [] };  // latest data
+    this.walmartDoc = fs.doc(db, this.base, "meta", "walmart");  // one document: every item's Walmart product (as JSON text)
+    this.state = { items: [], extras: [], dishes: [], projects: [], walmart: {} };  // latest data
     this.listeners = [];
     this.unsubs = [                                   // onSnapshot = "call me now and every time this changes" (this is the live sync)
       fs.onSnapshot(this.items, (snap) => this.set("items", snap.docs.map((d) => ({ ...d.data(), id: d.id })))),
@@ -77,6 +84,7 @@ export class FirebaseStore {
         .sort((a, b) => (a.added || "").localeCompare(b.added || "")))),  // oldest first
       fs.onSnapshot(this.dishDoc, (snap) => this.set("dishes", snap.exists() ? JSON.parse(snap.data().json) : [])),
       fs.onSnapshot(this.projects, (snap) => this.set("projects", snap.docs.map((d) => ({ ...d.data(), id: d.id })))),
+      fs.onSnapshot(this.walmartDoc, (snap) => this.set("walmart", snap.exists() ? JSON.parse(snap.data().json || "{}") : {})),  // live Walmart list
     ];
   }
   set(key, value) { this.state = { ...this.state, [key]: value }; this.listeners.forEach((fn) => fn(this.state)); }  // update + notify
@@ -101,9 +109,14 @@ export class FirebaseStore {
   }
   async addExtra(name) {
     if (this.state.extras.some((e) => e.name.toLowerCase() === name.toLowerCase())) return;  // already listed
-    await this.fs.addDoc(this.extras, { name, added: new Date().toISOString() });
+    const batch = this.fs.writeBatch(fb.db);          // save the extra + a new version stamp together
+    batch.set(this.fs.doc(this.extras), { name, added: new Date().toISOString() });  // fs.doc(collection) = new random id
+    this.stamp(batch); await batch.commit();          // the stamp tells the desktop app to download the change
   }
-  async removeExtra(id) { await this.fs.deleteDoc(this.fs.doc(this.extras, id)); }
+  async removeExtra(id) {                             // remove an extra + new stamp (so the desktop removes it too)
+    const batch = this.fs.writeBatch(fb.db);
+    batch.delete(this.fs.doc(this.extras, id)); this.stamp(batch); await batch.commit();
+  }
   async addProject(fields) {                          // projects also change the stamp, so the desktop app picks them up
     const batch = this.fs.writeBatch(fb.db);
     batch.set(this.fs.doc(this.projects), fields); this.stamp(batch); await batch.commit();
@@ -111,6 +124,13 @@ export class FirebaseStore {
   async updateProject(id, fields) {
     const batch = this.fs.writeBatch(fb.db);
     batch.update(this.fs.doc(this.projects, id), fields); this.stamp(batch); await batch.commit();
+  }
+  async setWalmart(name, pid) {                       // remember (or with pid '' forget) the Walmart product for an item
+    const map = { ...(this.state.walmart || {}) };    // copy of the current list
+    if (pid) map[name.toLowerCase()] = pid; else delete map[name.toLowerCase()];  // set it, or remove it
+    const sorted = Object.fromEntries(Object.entries(map).sort());  // A-Z, same order the desktop app writes
+    const batch = this.fs.writeBatch(fb.db);          // save the list + a new version stamp together
+    batch.set(this.walmartDoc, { json: JSON.stringify(sorted) }); this.stamp(batch); await batch.commit();  // so the desktop picks it up
   }
   async deleteProject(id) {
     const batch = this.fs.writeBatch(fb.db);
